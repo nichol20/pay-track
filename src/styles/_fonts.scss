@@ -4,34 +4,34 @@ $font-body: "Nunito", sans-serif;
 $heading-h1-font-weight: 600;
 $heading-h1-font-size: 1.625rem;
 $heading-h1-line-height: 130%;
-$heading-h1-font: $heading-h1-font-weight $heading-h1-font-size/$heading-h1-line-height $font-heading;
+$heading-h1-font: $heading-h1-font-weight $heading-h1-font-size/#{$heading-h1-line-height} $font-heading;
 
 $heading-h3-font-weight: 700;
 $heading-h3-font-size: 1.125rem;
 $heading-h3-line-height: 130%;
-$heading-h3-font: $heading-h3-font-weight $heading-h3-font-size/$heading-h3-line-height $font-heading;
+$heading-h3-font: $heading-h3-font-weight $heading-h3-font-size/#{$heading-h3-line-height} $font-heading;
 
 $heading-h4-font-weight: 700;
 $heading-h4-font-size: 1rem;
 $heading-h4-line-height: 130%;
-$heading-h4-font: $heading-h4-font-weight $heading-h4-font-size/$heading-h4-line-height $font-heading;
+$heading-h4-font: $heading-h4-font-weight $heading-h4-font-size/#{$heading-h4-line-height} $font-heading;
 
 $subtitle-font-weight: 700;
 $subtitle-font-size: 1rem;
 $subtitle-line-height: 150%;
-$subtitle-font: $subtitle-font-weight $subtitle-font-size/$subtitle-line-height $font-body;
+$subtitle-font: $subtitle-font-weight $subtitle-font-size/#{$subtitle-line-height} $font-body;
 
 $medium-body-text-font-weight: 400;
 $medium-body-text-font-size: 1rem;
 $medium-body-text-line-height: 170%;
-$medium-body-text-font: $medium-body-text-font-weight $medium-body-text-font-size/$medium-body-text-line-height $font-body;
+$medium-body-text-font: $medium-body-text-font-weight $medium-body-text-font-size/#{$medium-body-text-line-height} $font-body;
 
 $small-body-text-font-weight: 400;
 $small-body-text-font-size: 0.875rem;
 $small-body-text-line-height: 170%;
-$small-body-text-font: $small-body-text-font-weight $small-body-text-font-size/$small-body-text-line-height $font-body;
+$small-body-text-font: $small-body-text-font-weight $small-body-text-font-size/#{$small-body-text-line-height} $font-body;
 
 $minuscule-body-text-font-weight: 400;
 $minuscule-body-text-font-size: 0.75rem;
 $minuscule-body-text-line-height: 170%;
-$minuscule-body-text-font: $minuscule-body-text-font-weight $minuscule-body-text-font-size/$minuscule-body-text-line-height $font-body;
+$minuscule-body-text-font: $minuscule-body-text-font-weight $minuscule-body-text-font-size/#{$minuscule-body-text-line-height} $font-body;
