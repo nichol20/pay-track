@@ -1,5 +1,6 @@
 $font-heading: "Montserrat", sans-serif;
 $font-body: "Nunito", sans-serif;
+$font-inter: "Inter", sans-serif;
 
 $heading-h1-font-weight: 600;
 $heading-h1-font-size: 1.625rem;
@@ -23,7 +24,7 @@ $subtitle-font: $subtitle-font-weight $subtitle-font-size/#{$subtitle-line-heigh
 
 $medium-body-text-font-weight: 400;
 $medium-body-text-font-size: 1rem;
-$medium-body-text-line-height: 170%;
+$medium-body-text-line-height: 130%;
 $medium-body-text-font: $medium-body-text-font-weight $medium-body-text-font-size/#{$medium-body-text-line-height} $font-body;
 
 $small-body-text-font-weight: 400;

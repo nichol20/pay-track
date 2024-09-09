@@ -1,0 +1,39 @@
+@use "../../styles/" as *;
+
+.inputField {
+    position: relative;
+    width: 100%;
+    @include display-flex(center, flex-start);
+    gap: 5px;
+    flex-direction: column;
+
+    .prefix {
+        height: 100%;
+        padding: 30px 0 0 20px;
+        position: absolute;
+        font: $medium-body-text-font;
+        @include display-flex();
+    }
+
+    > label {
+        font: $small-body-text-font;
+        font-weight: 600;
+        
+        &::first-letter {
+            text-transform: capitalize;
+        }
+    }
+
+    > input {
+        width: 100%;
+        padding: 10px 14px;
+        border: 1px solid $colors-input-border-primary;
+        border-radius: 8px;
+        font: $medium-body-text-font;
+        line-height: 100%;
+    }
+}
+
+.inputField:has(> .prefix) > input {
+    padding-left: 44px;
+}

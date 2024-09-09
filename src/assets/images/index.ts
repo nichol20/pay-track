@@ -1,3 +1,7 @@
+/* --- IMAGES --- */
+export { default as loginPageImg } from './login-image.png'
+
+/* --- ICONS --- */
 /* FILE */
 export { default as addFileIcon } from './icons/add-file.svg'
 export { default as fileIcon } from './icons/file.svg'

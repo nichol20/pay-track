@@ -1,7 +1,19 @@
+@use './colors';
+@use './fonts';
+
 @mixin display-flex($justifyContent: center, $alignItems: center) {
     display: flex;
     justify-content: $justifyContent;
     align-items: $alignItems;
+}
+
+@mixin button-primary() {
+    background-color: colors.$button-bg-primary;
+    color: colors.$button-text-primary;
+    min-width: 160px;
+    padding: 4px;
+    border-radius: 8px;
+    font: fonts.$medium-body-text-font;
 }
 
 @mixin medium-pink-filter() {

@@ -1,0 +1,7 @@
+@use '../../styles/' as *;
+
+.errorMessage {
+    font-family: $font-inter;
+    font-size: .875rem;
+    color: $colors-error-message;
+}

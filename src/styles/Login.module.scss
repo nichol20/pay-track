@@ -1,0 +1,67 @@
+@use './index' as *;
+
+.login {
+    width: 100%;
+    height: 100vh;
+    @include display-flex(space-between);
+}
+
+.aside {
+    position: relative;
+    width: 28%;
+    height: 100%;
+
+    .title {
+        position: absolute;
+        top: 100px;
+        width: 100%;
+        text-align: center;
+        color: $colors-dark-green;
+        padding: 0px 15px;
+    }
+
+    > img {
+        width: 100%;
+        height: 100%;
+    }
+}
+
+.content {
+    width: 72%;
+    height: 100%;
+    @include display-flex();
+    flex-direction: column;
+}
+
+.form {
+    width: 355px;
+    @include display-flex();
+    flex-direction: column;
+    gap: 20px;
+
+    .formTitle {
+        color: $colors-text-primary
+    }
+
+    .passwordField {
+        position: relative;
+        width: 100%;
+
+        .forgotPasswordLink {
+            position: absolute;
+            top: 0;
+            right: 0;
+        }
+    }
+
+    .submitBtn {
+        @include button-primary();
+        margin-top: 40px;
+    }
+}
+
+.registerMessage {
+    margin-top: 8px;
+    font: $small-body-text-font;
+    color: $colors-text-primary;
+}
