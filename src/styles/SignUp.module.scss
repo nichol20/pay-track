@@ -1,0 +1,218 @@
+@use '.' as *;
+
+.signUp {
+    width: 100%;
+    height: 100vh;
+    @include display-flex(space-between);
+}
+
+.aside {
+    width: 30%;
+    height: 100%;
+    background-color: $colors-bg-secondary;
+    @include display-flex(center, flex-start);
+}
+
+.instructions {
+    margin-top: 20%;
+}
+
+.instructionStep {
+    @include display-flex(flex-start, flex-start);
+    gap: 20px;
+    margin-top: 5px;
+}
+
+.progressComponent {
+    @include display-flex();
+    flex-direction: column;
+    gap: 5px;
+
+    .ball {
+        position: relative;
+        width: 32px;
+        height: 32px;
+        border-radius: 100%;
+        background-color: $colors-gray-7;
+        border: 1px solid $colors-medium-green;
+
+        .centralBall {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 5px;
+            height: 5px;
+            border-radius: 100%;
+            transform: translate(-50%, -50%);
+            background-color: $colors-medium-green;
+        }     
+    }
+    
+    .verticalLine {
+        width: 4px;
+        height: 40px;
+        background-color: $colors-medium-green;
+    }
+}
+
+.instructionStep.current .ball {
+    background-color: $colors-medium-green;
+
+    .centralBall {
+        background-color: $colors-gray-7;
+    }
+}
+
+.instructionStep.done .ball {
+    background-color: $colors-medium-green;
+
+    .centralBall {
+        display: none;
+    }
+
+    .checkMark {
+        position: absolute;
+        left: 9px;
+        top: 16px;
+        border-color: $colors-gray-7;
+    }
+}
+
+.instructionStep:last-child .verticalLine {
+    display: none;
+}
+
+
+.description {
+    @include display-flex(center, flex-start);
+    flex-direction: column;
+
+    .title {
+        font: $subtitle-font;
+        color: $colors-highlighted-text-secondary
+    }
+
+    .subtitle {
+        font: $medium-body-text-font;
+        color: $colors-text-primary
+    }
+}
+
+.content {
+    width: 70%;
+    height: 100%;
+    @include display-flex();
+}
+
+.signUpForm {
+    position: relative;
+    width: 380px;
+}
+
+.formStep {
+    width: 100%;
+    @include display-flex();
+    flex-direction: column;
+    gap: 20px;
+    opacity: 0;
+    animation: slide 250ms ease-in-out both;
+    
+    .actions {
+        @include display-flex();
+        gap: 5px;
+        margin-top: 40px;
+    }
+}
+
+@keyframes slide {
+    0% {
+      transform: translateX(200%);
+      opacity: 0;
+    }
+    100% {
+      transform: translateX(0);
+      opacity: 1;
+    }
+}
+  
+@keyframes fade {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(.75);
+        opacity: 0;
+    }
+    100% {
+        opacity: 0;
+        transform: scale(0);
+    }
+}
+
+.nextBtn, .submitBtn {
+    @include button-primary();
+}
+
+.nextBtn {
+    margin-top: 40px;
+}
+
+.previousBtn {
+    @include button-secondary();
+}
+
+.feedbackBox {
+    background-color: $colors-bg-secondary;
+    width: 600px;
+    height: 512px;
+    border-radius: 20px;
+    @include display-flex();
+    flex-direction: column;
+    gap: 20px;
+    
+    .feedbackCheckMarkBox {
+        position: relative;
+        width: 104px;
+        height: 104px;
+        background-color: transparent;
+        border: 3px solid $colors-medium-green;
+        border-radius: 100%;
+        animation: none;
+
+        &.loading {
+            border: 3px solid $colors-translucent-gray;
+            border-left-color: $colors-medium-green;
+            animation: rotate 1.2s linear infinite;
+        }
+
+        .checkMark {
+            position: absolute;
+            left: 23px;
+            top: 50%;
+            border-color: $colors-medium-green;
+        }
+    }
+}
+
+.feedbackMessage {
+    font: $big-body-text-font;
+    color: $colors-text-primary;
+}
+
+.loginLink {
+    @include button-primary();
+    text-align: center;
+    text-decoration: none;
+}
+
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+    to{
+      transform: rotate(360deg);
+    }
+}
+
+

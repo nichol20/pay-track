@@ -14,10 +14,10 @@ export default function Login() {
             </aside>
             <main className={styles.content}>
                 <form className={styles.form}>
-                    <h3 className={styles.formTitle}>Faça seu login!</h3>
+                    <h2 className={styles.formTitle}>Faça seu login!</h2>
                     <InputField
                         inputId='email'
-                        title='e-mail'
+                        title='E-mail'
                         name="email"
                         type='email'
                         placeholder='Digite seu e-mail'
@@ -25,7 +25,7 @@ export default function Login() {
                     <div className={styles.passwordField}>
                         <InputField
                             inputId='password'
-                            title='password'
+                            title='Senha'
                             name="password"
                             type='password'
                             placeholder='Digite sua senha'

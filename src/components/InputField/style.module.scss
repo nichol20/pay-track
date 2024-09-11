@@ -7,30 +7,46 @@
     gap: 5px;
     flex-direction: column;
 
-    .prefix {
-        height: 100%;
-        padding: 30px 0 0 20px;
-        position: absolute;
-        font: $medium-body-text-font;
-        @include display-flex();
-    }
-
     > label {
         font: $small-body-text-font;
         font-weight: 600;
-        
-        &::first-letter {
-            text-transform: capitalize;
-        }
+    }
+}
+
+.inputBox {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid $colors-input-border-primary;
+    border-radius: 8px;
+    line-height: 100%;
+    font: $medium-body-text-font;
+    @include display-flex(flex-start);
+    
+    .prefix {
+        font: inherit;
+        padding-right: 5px;
+        font-weight: bold;
     }
 
+
     > input {
+        font: inherit;
+        background-color: transparent;
+        outline: none;
+        border: none;
         width: 100%;
-        padding: 10px 14px;
-        border: 1px solid $colors-input-border-primary;
-        border-radius: 8px;
-        font: $medium-body-text-font;
-        line-height: 100%;
+        color: inherit;
+    }
+
+    .showPasswordBtn {
+        background-color: transparent;
+        width: 20px;
+        height: 20px;
+
+        > img {
+            width: 100%;
+            height: 100%;
+        }
     }
 }
 

@@ -1,0 +1,35 @@
+.checkMark {
+    width: calc(var(--size)/2);
+    height: var(--size);
+    background-color: transparent;
+    border-top: var(--thickness) solid black;
+    border-right: var(--thickness) solid black;
+    transform: scaleX(-1) rotate(135deg);
+    transform-origin: left top;
+    animation: check-mark 0.8s ease both;
+}
+
+@keyframes check-mark {
+    0%{
+        border-width: 0;
+        height: 0;
+        width: 0;
+    }
+    1%{
+        border-width: var(--thickness);
+        height: 0;
+        width: 0;
+    }
+    20%{
+        height: 0;
+        width: calc(var(--size)/2);
+    }
+    40%{
+        height: var(--size);
+        width: calc(var(--size)/2);
+    }
+    100%{
+        height: var(--size);
+        width: calc(var(--size)/2);
+    }
+}

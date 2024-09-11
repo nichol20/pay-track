@@ -1,3 +1,8 @@
+"use client"
+import Image from 'next/image'
+import { useState } from 'react'
+
+import { eyeIcon, blockedEyeIcon } from '@/assets/images'
 
 import styles from './style.module.scss'
 
@@ -6,6 +11,7 @@ interface InputFieldProps {
     name: string
     type: React.HTMLInputTypeAttribute
     inputId: string
+    required?: boolean
     placeholder?: string
     defaultValue?: string | number | readonly string[]
     prefix?: string
@@ -19,6 +25,7 @@ const InputField = ({
     name,
     type,
     inputId,
+    required,
     placeholder,
     defaultValue,
     prefix,
@@ -26,21 +33,47 @@ const InputField = ({
     step,
     onChange
 }: InputFieldProps) => {
+    const [showPassword, setShowPassword] = useState(false)
+    const isPassword = type === "password"
+
+    const getType = (): React.HTMLInputTypeAttribute => {
+        if (isPassword) {
+            return showPassword ? "text" : "password"
+        }
+
+        return type
+    }
+
     return (
         <div className={styles.inputField}>
             <label htmlFor={inputId}>{title}</label>
-            {prefix && <span className={styles.prefix}>{prefix}</span>}
-            <input
-                type={type}
-                name={name}
-                id={inputId}
-                placeholder={placeholder}
-                spellCheck={false}
-                defaultValue={defaultValue}
-                min={min}
-                step={step}
-                onChange={onChange}
-            />
+            <div className={styles.inputBox}>
+                {prefix && <span className={styles.prefix}>{prefix}</span>}
+                <input
+                    type={getType()}
+                    name={name}
+                    id={inputId}
+                    placeholder={placeholder}
+                    spellCheck={false}
+                    defaultValue={defaultValue}
+                    min={min}
+                    step={step}
+                    onChange={onChange}
+                    required={required}
+                />
+                {isPassword && (
+                    <button
+                        className={styles.showPasswordBtn}
+                        onClick={() => setShowPassword(prev => !prev)}
+                        type='button'
+                    >
+                        <Image
+                            src={showPassword ? eyeIcon : blockedEyeIcon}
+                            alt={showPassword ? "eye" : "blocked eye"}
+                        />
+                    </button>
+                )}
+            </div>
         </div>
     )
 }

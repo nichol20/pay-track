@@ -16,6 +16,16 @@
     font: fonts.$medium-body-text-font;
 }
 
+@mixin button-secondary() {
+    background-color: colors.$button-bg-secondary;
+    color: colors.$button-text-secondary;
+    border: 1px solid colors.$button-border-secondary;
+    min-width: 160px;
+    padding: 4px;
+    border-radius: 8px;
+    font: fonts.$medium-body-text-font;
+}
+
 @mixin medium-pink-filter() {
     filter: invert(12%) sepia(94%) saturate(6574%) hue-rotate(321deg) brightness(86%) contrast(100%);
 }
