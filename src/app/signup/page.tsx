@@ -79,7 +79,22 @@ export default function SignUpPage() {
     }
 
     const getInstructionStepClass = (index: number) => {
-        return `${styles.instructionStep} ${index === currentStep ? styles.current : ""} ${index < currentStep ? styles.done : ""}`
+        let className = styles.instructionStep
+        if (index + 1 === steps.length && !isLoadingResult) {
+            className += ` ${styles.done}`
+        } else if (index === currentStep) {
+            className += ` ${styles.current}`
+        } else if (index < currentStep) {
+            className += ` ${styles.done}`
+        }
+        return className
+    }
+
+    const renderInstructionStepCheckMark = (index: number) => {
+        if (index < currentStep || (index + 1 === steps.length && !isLoadingResult)) {
+            return <CheckMark size={12} thickness={2} className={styles.checkMark} />
+        }
+        return <div className={styles.centerBall}></div>
     }
 
     return (
@@ -90,9 +105,7 @@ export default function SignUpPage() {
                         <div key={i} className={getInstructionStepClass(i)}>
                             <div className={styles.progressComponent}>
                                 <div className={styles.ball}>
-                                    {i < currentStep
-                                        ? <CheckMark size={12} thickness={2} className={styles.checkMark} />
-                                        : <div className={styles.centralBall}></div>}
+                                    {renderInstructionStepCheckMark(i)}
                                 </div>
                                 <div className={styles.verticalLine}></div>
                             </div>
@@ -166,9 +179,20 @@ export default function SignUpPage() {
                                 {isLoadingResult ? "Carregando..." : "Cadastro realizado com sucesso!"}
                             </span>
                         </div>
-                        <a href="/login" className={styles.loginLink}>Ir para Login</a>
+                        <a
+                            href="/login"
+                            className={`${styles.loginLink} ${isLoadingResult ? styles.disable : ""}`}
+                        >Ir para Login</a>
                     </div>
                 </form>
+                <div className={styles.carousel}>
+                    {steps.map((_, i) => (
+                        <div
+                            key={i}
+                            className={`${styles.carouselItem} ${i === currentStep ? styles.active : ""}`}
+                        ></div>
+                    ))}
+                </div>
             </main>
         </div>
     )

@@ -35,8 +35,9 @@
         border-radius: 100%;
         background-color: $colors-gray-7;
         border: 1px solid $colors-medium-green;
+        transition: background 250ms ease-in-out;
 
-        .centralBall {
+        .centerBall {
             position: absolute;
             top: 50%;
             left: 50%;
@@ -58,7 +59,7 @@
 .instructionStep.current .ball {
     background-color: $colors-medium-green;
 
-    .centralBall {
+    .centerBall {
         background-color: $colors-gray-7;
     }
 }
@@ -66,7 +67,7 @@
 .instructionStep.done .ball {
     background-color: $colors-medium-green;
 
-    .centralBall {
+    .centerBall {
         display: none;
     }
 
@@ -102,6 +103,7 @@
     width: 70%;
     height: 100%;
     @include display-flex();
+    flex-direction: column;
 }
 
 .signUpForm {
@@ -195,17 +197,6 @@
     }
 }
 
-.feedbackMessage {
-    font: $big-body-text-font;
-    color: $colors-text-primary;
-}
-
-.loginLink {
-    @include button-primary();
-    text-align: center;
-    text-decoration: none;
-}
-
 @keyframes rotate {
     from {
         transform: rotate(0deg);
@@ -215,4 +206,39 @@
     }
 }
 
+.feedbackMessage {
+    font: $big-body-text-font;
+    color: $colors-text-primary;
+}    
 
+.loginLink {
+    @include button-primary();
+    text-align: center;
+    text-decoration: none;
+    transition: background 250ms ease-in-out;
+
+    &.disable {
+        user-select: none;
+        pointer-events: none;
+        color: $colors-text-secondary;
+        background-color: $colors-gray-6;
+    }
+}    
+
+.carousel {
+    @include display-flex();
+    margin-top: 60px;
+    gap: 8px;
+
+    .carouselItem {
+        height: 6px;
+        width: 86px;
+        border-radius: 8px;
+        background-color: $colors-gray-6;
+        transition: background 250ms ease-in-out;
+        
+        &.active {
+            background-color: $colors-medium-green;
+        }
+    }
+}
