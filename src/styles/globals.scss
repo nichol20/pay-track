@@ -16,6 +16,7 @@ body {
     width: 100%;
     overflow-x: hidden;
     color: $colors-text-primary;
+    background-color: $colors-bg-primary;
 }
 
 button {
@@ -46,4 +47,19 @@ h4 {
 
 .hide {
     display: none !important; 
+}
+
+.app {
+    width: 100%;
+    min-height: 100vh;
+    display: grid;
+    grid-template-areas:
+        'aside header'
+        'aside content';
+    grid-template-rows: 100px auto;
+    grid-template-columns: 100px auto;
+}
+
+.content {
+    grid-area: content;
 }

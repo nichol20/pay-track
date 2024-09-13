@@ -32,10 +32,10 @@ $gray-8: #F8F8F9;
 $light-sucess: #C3D4FE;
 $medium-sucess: #4F78E3;
 $dark-sucess: #243F80;
-$light-attention: #F5D9B0;
+$light-attention: #FCF6DC;
 $medium-attention: #EF8F00;
 $dark-attention: #CC7800;
-$light-error: #F2D6D0;
+$light-error: #FFEFEF;
 $medium-error: #E70000;
 $dark-error: #AE1100;
 
@@ -59,8 +59,16 @@ $bg-secondary: $gray-7;
 $input-border-primary: #D0D5DD;
 
 $modal-bg: white;
+$table-bg: white;
 
 $light-shadow: $translucent-gray;
 $text-link: $medium-pink;
 $field-error-border: $medium-error;
 $error-message: $medium-error;
+
+$valid-bg: $light-petroleum;
+$valid-text: $medium-petroleum;
+$invalid-bg: $light-error;
+$invalid-text: $dark-error;
+$attention-bg: $light-attention;
+$attention-text: $dark-attention;

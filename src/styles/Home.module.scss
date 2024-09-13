@@ -1,0 +1,47 @@
+@use '.' as *;
+
+.home {
+    width: 100%;
+    height: 100%;
+    @include display-flex(flex-start);
+    flex-direction: column;
+    padding: 19px;
+}
+
+.chargeSummary {
+    @include display-flex();
+    gap: 30px;
+
+    > div {
+        @include display-flex();
+        padding: 20px 30px;
+        border-radius: 14px;
+        gap: 50px;
+
+        &.payedCharges {
+            background-color: $colors-valid-bg;
+        }
+
+        &.overdueCharges {
+            background-color: $colors-invalid-bg;
+        }
+
+        &.expectedCharges {
+            background-color: $colors-attention-bg;
+        }
+
+        .info {
+            @include display-flex();
+            flex-direction: column;
+            color: $colors-text-primary;
+
+            .title {
+                font: $subtitle-font;
+            }
+
+            .totalAmount {
+                font: $big-body-text-font;
+            }
+        }
+    }
+}

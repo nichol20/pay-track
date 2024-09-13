@@ -1,0 +1,36 @@
+@use '../../styles/' as *;
+
+.header {
+    grid-area: header;
+    @include display-flex(space-between);
+    padding-top: 30px;
+    margin-left: 32px;
+    margin-right: 32px;
+    border-bottom: 1px solid $colors-medium-green;
+
+    .title {
+        color: $colors-text-primary;
+    }
+
+}
+
+.userInfo {
+    @include display-flex();
+    align-self: flex-start;
+    gap: 6px;
+    margin-right: 20px;
+
+    .userImg {
+        background-color: $colors-gray-6;
+        border-radius: 100%;
+        padding: 9px;
+        font: $subtitle-font;
+        color: $colors-medium-green;
+    }
+    
+    .userName {
+        color: $colors-medium-green;
+        font: $medium-body-text-font;
+        font-weight: 600;
+    }
+}
