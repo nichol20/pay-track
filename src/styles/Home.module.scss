@@ -6,6 +6,7 @@
     @include display-flex(flex-start);
     flex-direction: column;
     padding: 19px;
+    gap: 28px;
 }
 
 .chargeSummary {
@@ -18,7 +19,7 @@
         border-radius: 14px;
         gap: 50px;
 
-        &.payedCharges {
+        &.paidCharges {
             background-color: $colors-valid-bg;
         }
 
@@ -44,4 +45,99 @@
             }
         }
     }
+}
+
+.chargeTables {
+    @include display-flex();
+    width: 100%;
+    gap: 32px;
+}
+
+.chargeTable {
+    max-width: 360px;
+    flex: 1;
+    background-color: $colors-table-bg;
+    border-radius: 20px;
+
+    .chargeTableTitleBox {
+        height: 50px;
+        @include display-flex();
+        border-bottom: 1px solid $colors-gray-7;
+        padding: 0 24px;
+
+        .chargeTableTitle {
+            font: $subtitle-font;
+            width: 75%;
+            text-align: end;
+        }
+    }
+
+    .chargeList {
+        border-radius: 0px;
+    }
+}
+
+.rowAmount {
+    padding: 0 12px;
+    margin-left: auto;
+    border-radius: 6px;
+}
+
+.tableFooter {
+    height: 50px;
+    @include display-flex();
+}
+
+.chargeTable.paidChargesTable .rowAmount {
+    background-color: $colors-valid-bg;
+    color: $colors-valid-text;
+}
+
+.chargeTable.pendingChargesTable .rowAmount {
+    background-color: $colors-attention-bg;
+    color: $colors-attention-text;
+}
+
+.chargeTable.overdueChargesTable .rowAmount {
+    background-color: $colors-invalid-bg;
+    color: $colors-invalid-text;
+}
+
+.clientTables {
+    @include display-flex();
+    width: 100%;
+    gap: 32px;
+}
+
+.clientTable {
+    max-width: 556px;
+    flex: 1;
+    background-color: $colors-table-bg;
+    border-radius: 20px;
+
+    .clientTableTitleBox {
+        height: 50px;
+        @include display-flex();
+        padding: 0 24px;
+        border-bottom: 1px solid $colors-gray-7;
+
+        .clientTableTitle {
+            font: $subtitle-font;
+            margin-left: 8px;
+        }
+    }
+
+    .clientList {
+        border-radius: 0;
+    }
+}
+
+.clientTable.upToDateClientTable .rowAmount {
+    background-color: $colors-valid-bg;
+    color: $colors-valid-text;
+}
+
+.clientTable.defaulterClientTable .rowAmount {
+    background-color: $colors-invalid-bg;
+    color: $colors-invalid-text;
 }

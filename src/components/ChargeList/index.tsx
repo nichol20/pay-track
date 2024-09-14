@@ -17,8 +17,9 @@ export type ChargeListColumn =
     | "options"
 
 interface ChargeListProps {
-    columns: ChargeListColumn[]
+    columns?: ChargeListColumn[]
     rows: Charge[]
+    className?: string
 }
 
 const columnStyles: Record<ChargeListColumn, string> = {
@@ -52,8 +53,8 @@ const fieldNames: Omit<Record<ChargeListColumn, keyof Charge>, "options"> = {
 
 const columnsOrder: ChargeListColumn[] = ["client", "chargeId", "value", "dueDate", "status", "description", "options"]
 
-export const ChargeList = ({ columns, rows }: ChargeListProps) => {
-    const sortedColumns = columnsOrder.filter(column => columns.includes(column))
+export const ChargeList = ({ columns, rows, className }: ChargeListProps) => {
+    const sortedColumns = columns ? columnsOrder.filter(column => columns.includes(column)) : columnsOrder
     const headerStyle: CSSProperties = {
         gridTemplateColumns: sortedColumns
             .map(column => `[ ${column} ] ${columnStyles[column]}`)
@@ -81,7 +82,7 @@ export const ChargeList = ({ columns, rows }: ChargeListProps) => {
     }
 
     return (
-        <div className={styles.chargeList}>
+        <div className={`${styles.chargeList} ${className}`}>
             <div className={styles.header} style={headerStyle}>
                 {sortedColumns.map(column => (
                     <div key={column} className={`${styles[`${column}Col`]} ${styles.col}`}>

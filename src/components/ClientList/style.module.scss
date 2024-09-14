@@ -1,12 +1,12 @@
 @use '../../styles/' as *;
 
-.chargeList {
+.clientList {
     background-color: $colors-table-bg;
     border-radius: 20px;
     padding: 10px 23px 0 23px;
 }
 
-.chargeRow, .header {
+.clientRow, .header {
     grid-template-rows: 50px; 
     display: grid;
     gap: 16px;
@@ -16,7 +16,7 @@
     border-bottom: 1px solid $colors-gray-7;
 }
 
-.chargeRow {
+.clientRow {
     &:not(:last-child) {
         border-bottom: 1px solid $colors-gray-7;
     }
@@ -57,39 +57,27 @@
         border-radius: 6px;
     }
 
-    .content.paid {
+    .content.upToDate {
         background-color: $colors-valid-bg;
         color: $colors-valid-text;
     }
 
-    .content.pending {
-        background-color: $colors-attention-bg;
-        color: $colors-attention-text;
-    }
-
-    .content.overdue {
+    .content.defaulter {
         background-color: $colors-invalid-bg;
         color: $colors-invalid-text;
     }
 }
 
-.optionsRowItem {
-    @include display-flex();
-    gap: 18px;
-
-    > button {
+.addChargeRowItem {
+    
+    .addChargeBtn {
         @include display-flex();
-        gap: 3px;
         flex-direction: column;
         background-color: transparent;
-        font: $minuscule-body-text-font;
-    }
+        color: $colors-highlighted-text-primary;
 
-    .editBtn {
-        color: $colors-text-secondary;
-    }
-
-    .deleteBtn {
-        color: $colors-dark-error;
+        > img {
+            @include medium-pink-filter();
+        }
     }
 }
