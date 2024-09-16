@@ -3,7 +3,7 @@
 .header {
     grid-area: header;
     @include display-flex(space-between);
-    padding-top: 30px;
+    padding: 30px 50px 0 50px;
     margin-left: 32px;
     margin-right: 32px;
     border-bottom: 1px solid $colors-medium-green;
@@ -12,6 +12,23 @@
         color: $colors-text-primary;
     }
 
+}
+
+.path {
+    font-family: $font-inter;
+    font-size: 1rem;
+    @include display-flex();
+    gap: 10px;
+    align-self: flex-end;
+
+    .pathLink {
+        text-decoration: none;
+        color: $colors-highlighted-text-secondary;
+
+        &:hover {
+            text-decoration: underline
+        }
+    }
 }
 
 .userInfo {
@@ -33,4 +50,71 @@
         font: $medium-body-text-font;
         font-weight: 600;
     }
+
+}
+
+.optionsContainer {
+    position: relative;
+    user-select: none;
+    cursor: pointer;
+    
+    .showOptionsBtn {
+        background-color: transparent;
+    }
+
+    .options {
+        position: absolute;
+        background-color: $colors-modal-bg;
+        border-radius: 8px;
+        padding: 10px 15px;
+        @include display-flex();
+        @include light-box-shadow();
+        gap: 16px;
+        left: -11px;
+        top: 20px;
+        
+        &::after {
+            content: "";
+            position: absolute;
+            @include triangle(19px, 9px, $colors-modal-bg);
+            top: -6px;
+            left: 10px;
+        }
+
+        > button {
+            @include display-flex();
+            flex-direction: column;
+            background-color: transparent;
+            color: $colors-text-secondary;
+            font: $minuscule-body-text-font;
+            
+            &:first-child > img {
+                margin-top: 2px;
+                margin-bottom: 5px;
+            }
+        }
+
+    }
+}
+
+.editForm {
+    @include display-flex();
+    flex-direction: column;
+    gap: 20px;
+}
+
+.formTitle {
+    text-align: center;
+    font: $big-body-text-font;
+    width: 100%;
+    display: block;
+}
+
+.fieldGroup {
+    @include display-flex();
+    gap: 24px;
+}
+
+.submitBtn {
+    @include button-primary();
 }
