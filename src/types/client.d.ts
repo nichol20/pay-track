@@ -1,6 +1,7 @@
 export type ClientStatus = "Em dia" | "Inadimplente"
 
 export interface Client {
+    id: number
     nome: string
     cpf: string
     email: string

@@ -6,6 +6,7 @@ import Image from 'next/image'
 import { pencilIcon, trashCanIcon } from '@/assets/images'
 import { centsToReal } from '@/utils/money'
 import { translateChargeStatus } from '@/utils/translation'
+import Link from 'next/link'
 
 export type ChargeListColumn =
     | "client"
@@ -74,9 +75,15 @@ export const ChargeList = ({ columns, rows, className }: ChargeListProps) => {
             contentClassName += ` ${styles[translateChargeStatus(row.status)]}`
         }
 
+        let contentElement = <span className={contentClassName}>{content}</span>
+
+        if (columnName === "client") {
+            contentElement = <Link href={`clients/${row.id}`} className={contentClassName}>{content}</Link>
+        }
+
         return (
             <div key={columnName} className={`${styles[`${columnName}RowItem`]} ${styles.rowItem}`}>
-                <span className={contentClassName}>{content}</span>
+                {contentElement}
             </div>
         )
     }

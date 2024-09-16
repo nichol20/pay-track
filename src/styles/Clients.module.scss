@@ -1,0 +1,37 @@
+@use '.' as *;
+
+.clientsPage {
+    padding: 20px 72px;
+}
+
+.header {
+    @include display-flex(space-between);
+    
+    .titleBox {
+        @include display-flex();
+        gap: 16px;
+
+        > img {
+            width: 32px;
+            height: 32px;
+        }
+    }
+
+    .actions {
+        @include display-flex();
+        gap: 24px;
+
+        .addClientBtn {
+            @include button-primary();
+            padding: 4px 56px;
+        }
+
+        .filterBtn {
+            width: 40px;
+            height: 40px;
+            background-color: white;
+            padding: 8px;
+            border-radius: 8px;
+        }
+    }
+}

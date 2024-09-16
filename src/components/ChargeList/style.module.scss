@@ -50,6 +50,17 @@
     }
 }
 
+.clientRowItem {
+    .content {
+        color: $colors-text-secondary;
+        text-decoration: none;
+        
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+}
+
 .statusRowItem {
 
     .content {

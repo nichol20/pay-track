@@ -16,8 +16,10 @@ export { default as invalidClientIcon } from './icons/invalid-client.svg'
 
 /* OTHERS */
 export { default as homeIcon } from './icons/home.svg'
-export { default as filtersIcon } from './icons/filters.svg'
+export { default as filterIcon } from './icons/filter.svg'
 export { default as pencilIcon } from './icons/pencil.svg'
 export { default as trashCanIcon } from './icons/trash-can.svg'
 export { default as eyeIcon } from './icons/eye.png'
 export { default as blockedEyeIcon } from './icons/blocked-eye.png'
+export { default as searchIcon } from './icons/magnifying-glass.svg'
+export { default as closeIcon } from './icons/x.svg'

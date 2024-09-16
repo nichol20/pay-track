@@ -6,6 +6,7 @@ import { translateClientStatus } from '@/utils/translation'
 
 import styles from './style.module.scss'
 import { addFileIcon } from '@/assets/images'
+import Link from 'next/link'
 
 export type ClientListColumn =
     | "client"
@@ -44,7 +45,7 @@ const columnHeaders: Record<ClientListColumn, string> = {
 
 const fieldNames: Omit<Record<ClientListColumn, keyof Client>, "addCharge"> = {
     client: "nome",
-    clientId: "usuario_id",
+    clientId: "id",
     cpf: "cpf",
     email: "email",
     phone: "telefone",
@@ -70,9 +71,15 @@ export const ClientList = ({ columns, rows, className }: ClientListProps) => {
             contentClassName += ` ${styles[translateClientStatus(row.status)]}`
         }
 
+        let contentElement = <span className={contentClassName}>{content}</span>
+
+        if (columnName === "client") {
+            contentElement = <Link href={`clients/${row.id}`} className={contentClassName}>{content}</Link>
+        }
+
         return (
             <div key={columnName} className={`${styles[`${columnName}RowItem`]} ${styles.rowItem}`}>
-                <span className={contentClassName}>{content}</span>
+                {contentElement}
             </div>
         )
     }
@@ -88,7 +95,7 @@ export const ClientList = ({ columns, rows, className }: ClientListProps) => {
             </div>
             <div className={styles.rows}>
                 {rows.map(row => (
-                    <div key={row.usuario_id} className={styles.clientRow} style={headerStyle}>
+                    <div key={row.id} className={styles.clientRow} style={headerStyle}>
                         {sortedColumns.map(column => renderRow(row, column))}
                         {sortedColumns.includes("addCharge") &&
                             <div className={`${styles.addChargeRowItem} ${styles.rowItem}`}>
