@@ -98,8 +98,8 @@ export const ChargeList = ({ columns, rows, className }: ChargeListProps) => {
                 ))}
             </div>
             <div className={styles.rows}>
-                {rows.map(row => (
-                    <div key={row.id_cob} className={styles.chargeRow} style={headerStyle}>
+                {rows.map((row, i) => (
+                    <div key={i} className={styles.chargeRow} style={headerStyle}>
                         {sortedColumns.map(column => renderRow(row, column))}
                         {sortedColumns.includes("options") &&
                             <div className={`${styles.optionsRowItem} ${styles.rowItem}`}>

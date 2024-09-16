@@ -1,6 +1,10 @@
 @use '../../styles/' as *;
 
 .aside {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
     grid-area: aside;
     background-color: $colors-bg-secondary;
     padding: 40px 16px;
