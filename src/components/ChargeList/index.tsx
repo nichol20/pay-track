@@ -1,4 +1,5 @@
-import { CSSProperties } from 'react'
+"use client"
+import { CSSProperties, useState } from 'react'
 import { Charge } from '@/types/charge'
 
 import styles from './style.module.scss'
@@ -7,6 +8,7 @@ import { pencilIcon, trashCanIcon } from '@/assets/images'
 import { centsToReal } from '@/utils/money'
 import { translateChargeStatus } from '@/utils/translation'
 import Link from 'next/link'
+import { ChargeForm } from '../ChargeForm'
 
 export type ChargeListColumn =
     | "client"
@@ -55,6 +57,8 @@ const fieldNames: Omit<Record<ChargeListColumn, keyof Charge>, "options"> = {
 const columnsOrder: ChargeListColumn[] = ["client", "chargeId", "dueDate", "value", "status", "description", "options"]
 
 export const ChargeList = ({ columns, rows, className }: ChargeListProps) => {
+    const [showEditChargeForm, setShowEditChargeForm] = useState(false)
+    const [currentCharge, setCurrentCharge] = useState<Charge | null>(null)
     const sortedColumns = columns ? columnsOrder.filter(column => columns.includes(column)) : columnsOrder
     const headerStyle: CSSProperties = {
         gridTemplateColumns: sortedColumns
@@ -88,6 +92,11 @@ export const ChargeList = ({ columns, rows, className }: ChargeListProps) => {
         )
     }
 
+    const handleEditChargeBtnClick = (charge: Charge) => {
+        setCurrentCharge(charge)
+        setShowEditChargeForm(true)
+    }
+
     return (
         <div className={`${styles.chargeList} ${className}`}>
             <div className={styles.header} style={headerStyle}>
@@ -103,7 +112,7 @@ export const ChargeList = ({ columns, rows, className }: ChargeListProps) => {
                         {sortedColumns.map(column => renderRow(row, column))}
                         {sortedColumns.includes("options") &&
                             <div className={`${styles.optionsRowItem} ${styles.rowItem}`}>
-                                <button className={styles.editBtn}>
+                                <button className={styles.editBtn} onClick={() => handleEditChargeBtnClick(row)}>
                                     <Image src={pencilIcon} alt='pencil' />
                                     <span>Editar</span>
                                 </button>
@@ -114,6 +123,11 @@ export const ChargeList = ({ columns, rows, className }: ChargeListProps) => {
                             </div>}
                     </div>
                 ))}
+                {showEditChargeForm &&
+                    <ChargeForm
+                        client={currentCharge ? { id: currentCharge.id, name: currentCharge.cliente_nome } : null}
+                        close={() => setShowEditChargeForm(false)}
+                    />}
             </div>
         </div>
     )

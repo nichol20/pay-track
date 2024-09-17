@@ -2,6 +2,7 @@
 import Image from 'next/image'
 import { useState } from 'react'
 
+import { TextareaField } from './TextareaField'
 import { eyeIcon, blockedEyeIcon } from '@/assets/images'
 
 import styles from './style.module.scss'
@@ -82,4 +83,5 @@ const InputField = ({
 
 export {
     InputField,
+    TextareaField
 }

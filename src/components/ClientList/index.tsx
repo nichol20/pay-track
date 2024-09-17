@@ -1,12 +1,14 @@
-import { CSSProperties } from 'react'
+"use client"
+import { CSSProperties, useState } from 'react'
 import Image from 'next/image'
+import Link from 'next/link'
 
 import { Client } from '@/types/client'
 import { translateClientStatus } from '@/utils/translation'
+import { addFileIcon } from '@/assets/images'
+import { ChargeForm } from '../ChargeForm'
 
 import styles from './style.module.scss'
-import { addFileIcon } from '@/assets/images'
-import Link from 'next/link'
 
 export type ClientListColumn =
     | "client"
@@ -55,6 +57,8 @@ const fieldNames: Omit<Record<ClientListColumn, keyof Client>, "addCharge"> = {
 const columnsOrder: ClientListColumn[] = ["client", "clientId", "cpf", "email", "phone", "status", "addCharge"]
 
 export const ClientList = ({ columns, rows, className }: ClientListProps) => {
+    const [showAddChargeForm, setShowAddChargeForm] = useState(false)
+    const [currentClient, setCurrentClient] = useState<Client | null>(null)
     const sortedColumns = columns ? columnsOrder.filter(column => columns.includes(column)) : columnsOrder
     const headerStyle: CSSProperties = {
         gridTemplateColumns: sortedColumns
@@ -84,6 +88,11 @@ export const ClientList = ({ columns, rows, className }: ClientListProps) => {
         )
     }
 
+    const handleAddChargeBtnClick = (client: Client) => {
+        setCurrentClient(client)
+        setShowAddChargeForm(true)
+    }
+
     return (
         <div className={`${styles.clientList} ${className}`}>
             <div className={styles.header} style={headerStyle}>
@@ -99,13 +108,18 @@ export const ClientList = ({ columns, rows, className }: ClientListProps) => {
                         {sortedColumns.map(column => renderRow(row, column))}
                         {sortedColumns.includes("addCharge") &&
                             <div className={`${styles.addChargeRowItem} ${styles.rowItem}`}>
-                                <button className={styles.addChargeBtn}>
+                                <button className={styles.addChargeBtn} onClick={() => handleAddChargeBtnClick(row)}>
                                     <Image src={addFileIcon} alt="add file" />
                                     <span>Cobrança</span>
                                 </button>
                             </div>}
                     </div>
                 ))}
+                {showAddChargeForm &&
+                    <ChargeForm
+                        client={currentClient ? { id: currentClient.id, name: currentClient.nome } : null}
+                        close={() => setShowAddChargeForm(false)}
+                    />}
             </div>
         </div>
     )
