@@ -52,7 +52,7 @@ const fieldNames: Omit<Record<ChargeListColumn, keyof Charge>, "options"> = {
     description: "descricao",
 }
 
-const columnsOrder: ChargeListColumn[] = ["client", "chargeId", "value", "dueDate", "status", "description", "options"]
+const columnsOrder: ChargeListColumn[] = ["client", "chargeId", "dueDate", "value", "status", "description", "options"]
 
 export const ChargeList = ({ columns, rows, className }: ChargeListProps) => {
     const sortedColumns = columns ? columnsOrder.filter(column => columns.includes(column)) : columnsOrder

@@ -4,6 +4,8 @@
     background-color: $colors-table-bg;
     border-radius: 20px;
     padding: 10px 23px 0 23px;
+    @include light-box-shadow();
+    width: 100%;
 }
 
 .chargeRow, .header {

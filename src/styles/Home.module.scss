@@ -58,6 +58,7 @@
     flex: 1;
     background-color: $colors-table-bg;
     border-radius: 20px;
+    @include light-box-shadow();
 
     .chargeTableTitleBox {
         height: 50px;
@@ -74,6 +75,7 @@
 
     .chargeList {
         border-radius: 0px;
+        box-shadow: none;
     }
 }
 
@@ -114,6 +116,7 @@
     flex: 1;
     background-color: $colors-table-bg;
     border-radius: 20px;
+    @include light-box-shadow();
 
     .clientTableTitleBox {
         height: 50px;
@@ -129,6 +132,7 @@
 
     .clientList {
         border-radius: 0;
+        box-shadow: none;
     }
 }
 

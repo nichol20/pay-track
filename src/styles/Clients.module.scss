@@ -2,10 +2,15 @@
 
 .clientsPage {
     padding: 20px 72px;
+    @include display-flex();
+    flex-direction: column;
+    gap: 24px;
+    width: 100%;
 }
 
 .header {
     @include display-flex(space-between);
+    width: 100%;
     
     .titleBox {
         @include display-flex();
@@ -32,6 +37,7 @@
             background-color: white;
             padding: 8px;
             border-radius: 8px;
+            @include light-box-shadow();
         }
     }
 }

@@ -1,0 +1,73 @@
+@use "." as *;
+
+.clientPage {
+    padding: 20px 72px;
+    @include display-flex(center, flex-start);
+    flex-direction: column;
+    gap: 24px;
+    width: 100%;
+}
+
+.titleBox {
+    @include display-flex(flex-start);
+    gap: 16px;
+
+    > img {
+        width: 32px;
+        height: 32px;
+    }
+}
+
+.clientTableInfo {
+    background-color: $colors-table-bg;
+    padding: 24px 20px;
+    @include light-box-shadow();
+    border-radius: 20px;
+    width: 100%;
+
+    .tableHeader {
+        @include display-flex(space-between);
+
+        .tableTitle {
+            font: $subtitle-font;
+            color: $colors-text-primary;
+        }
+
+        .editClientBtn {
+            @include button-secondary();
+            @include display-flex();
+            gap: 5px;
+
+            > img {
+                width: 13px;
+                height: 13px;
+            }
+        }
+    }
+
+    .info {
+        display: grid;
+        grid-template-columns: repeat(1fr);
+        grid-template-rows: 1fr 1fr;
+        gap: 40px;
+        grid-template-areas:
+            "email phone cpf . . ."
+            "address neighborhood complement cep city uf";
+        margin-top: 18px;
+
+        .field {
+            display: flex;
+            flex-direction: column;
+            color: $colors-text-primary;
+
+            &.hidden {
+                display: none; // Hide fields with null values
+            }
+
+            .title {
+                font-weight: bold;
+                margin-bottom: 8px;
+            }
+        }
+    }
+}
