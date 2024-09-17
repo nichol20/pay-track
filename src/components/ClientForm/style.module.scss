@@ -1,0 +1,48 @@
+@use '../../styles/' as *;
+
+.clientForm {
+    @include display-flex(center, flex-start);
+    flex-direction: column;
+    width: 100%;
+    gaP: 8px;
+
+}
+
+.titleBox {
+    @include display-flex();
+    gap: 16px;
+    font: $big-body-text-font;
+
+    > img {
+        width: 32px;
+        height: 32px;
+    }
+}   
+
+.fieldGroup {
+    @include display-flex();
+    gap: 20px;
+
+    .cityField {
+        width: 65%;
+    }
+
+    .ufField {
+        width: 35%;
+    }
+}
+
+.actions {
+    width: 100%;
+    @include display-flex();
+    gap: 20px;
+    margin-top: 30px;
+
+    .cancelBtn {
+        @include button-secondary();
+    }
+
+    .submitBtn {
+        @include button-primary();
+    }
+}

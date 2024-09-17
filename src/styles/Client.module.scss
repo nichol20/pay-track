@@ -71,3 +71,28 @@
         }
     }
 }
+
+.chargeListBox {
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    @include light-box-shadow();   
+    background-color: $colors-table-bg;
+
+    .titleBox {
+        @include display-flex(space-between);
+        padding: 24px 15px;
+        font: $subtitle-font;
+    }
+
+    .addChargeBtn {
+        @include button-primary();
+        padding: 3px 50px;
+    }
+
+    .list {
+        border-top-left-radius: 0px;
+        border-top-right-radius: 0px;
+        box-shadow: none;
+    }
+
+}

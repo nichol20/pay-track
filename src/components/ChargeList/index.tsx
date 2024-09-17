@@ -24,9 +24,9 @@ interface ChargeListProps {
 }
 
 const columnStyles: Record<ChargeListColumn, string> = {
-    client: "minmax(120px, 1fr)",
-    chargeId: "minmax(120px, 1fr)",
-    value: "minmax(120px, 1fr)",
+    client: "minmax(100px, 1fr)",
+    chargeId: "minmax(100px, 1fr)",
+    value: "minmax(100px, 1fr)",
     dueDate: "minmax(120px, 1fr)",
     status: "minmax(100px, 1fr)",
     description: "minmax(180px, 1fr)",

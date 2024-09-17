@@ -1,6 +1,7 @@
 "use client"
 import { clientsIcon, pencilIcon } from '@/assets/images'
 import { ChargeList } from '@/components/ChargeList'
+import { ClientForm } from '@/components/ClientForm'
 import styles from '@/styles/Client.module.scss'
 import { Client } from '@/types/client'
 import { translateClientProperty } from '@/utils/translation'
@@ -67,6 +68,7 @@ export default function ClientPage() {
         endereco: null,
         uf: null,
     })
+    const [showEditClientForm, setShowEditClientForm] = useState(false)
 
     const renderTableFields = (k: string) => {
         const key = k as keyof Client
@@ -91,7 +93,7 @@ export default function ClientPage() {
             <div className={styles.clientTableInfo}>
                 <div className={styles.tableHeader}>
                     <span className={styles.tableTitle}>Dados do cliente</span>
-                    <button className={styles.editClientBtn}>
+                    <button className={styles.editClientBtn} onClick={() => setShowEditClientForm(true)}>
                         <Image src={pencilIcon} alt="pencil" />
                         <span>Editar Cliente</span>
                     </button>
@@ -100,9 +102,20 @@ export default function ClientPage() {
                 <div className={styles.info}>
                     {Object.keys(client).map(renderTableFields)}
                 </div>
+                {showEditClientForm && <ClientForm client={client} close={() => setShowEditClientForm(false)} />}
             </div>
 
-            <ChargeList rows={charges} columns={["chargeId", "value", "status", "description", "dueDate"]} />
+            <div className={styles.chargeListBox}>
+                <div className={styles.titleBox}>
+                    <span className={styles.title}>Cobranças do Cliente</span>
+                    <button className={styles.addChargeBtn}>+ Nova cobrança</button>
+                </div>
+                <ChargeList
+                    className={styles.list}
+                    rows={charges}
+                    columns={["chargeId", "value", "status", "description", "dueDate"]}
+                />
+            </div>
         </div>
     )
 }

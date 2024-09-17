@@ -11,6 +11,7 @@ interface InputFieldProps {
     name: string
     type: React.HTMLInputTypeAttribute
     inputId: string
+    className?: string
     required?: boolean
     placeholder?: string
     defaultValue?: string | number | readonly string[]
@@ -25,6 +26,7 @@ const InputField = ({
     name,
     type,
     inputId,
+    className,
     required,
     placeholder,
     defaultValue,
@@ -45,7 +47,7 @@ const InputField = ({
     }
 
     return (
-        <div className={styles.inputField}>
+        <div className={`${styles.inputField} ${className}`}>
             <label htmlFor={inputId}>{title}</label>
             <div className={styles.inputBox}>
                 {prefix && <span className={styles.prefix}>{prefix}</span>}

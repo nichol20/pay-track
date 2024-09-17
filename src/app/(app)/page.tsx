@@ -9,6 +9,7 @@ import Link from 'next/link'
 
 const charges: Charge[] = [
   {
+    id: 1,
     cliente_nome: "Andressa",
     data_venc: "2001-20-12",
     descricao: "paosodjjap odjsap odjasop dosaihd saoi hdosai hdosia hdoias hdoiah soidh asoi",
@@ -17,6 +18,7 @@ const charges: Charge[] = [
     valor: 900
   },
   {
+    id: 1,
     cliente_nome: "Andressa",
     data_venc: "2001-20-12",
     descricao: "paosodjjap odjsap odjasop dosaihd saoi hdosai hdosia hdoias hdoiah soidh asoi",
@@ -25,17 +27,19 @@ const charges: Charge[] = [
     valor: 900
   },
   {
+    id: 1,
     cliente_nome: "Andressa",
     data_venc: "2001-20-12",
     descricao: "paosodjjap odjsap odjasop dosaihd saoi hdosai hdosia hdoias hdoiah soidh asoi",
     id_cob: "d8as0d98-da8sd09a8a-312d1s12-s12s212",
     status: "Vencida",
-    valor: 900
+    valor: 900000
   },
 ]
 
 const clients: Client[] = [
   {
+    id: 1,
     nome: "Andressa",
     email: "andressa@emaill.com",
     telefone: "93218 0139",
@@ -50,6 +54,7 @@ const clients: Client[] = [
     uf: null,
   },
   {
+    id: 2,
     nome: "Jorge",
     email: "Jorge@emaill.com",
     telefone: "93218 0139",
@@ -64,6 +69,7 @@ const clients: Client[] = [
     uf: null,
   },
   {
+    id: 3,
     nome: "Juão",
     email: "Juão@emaill.com",
     telefone: "93218 0139",

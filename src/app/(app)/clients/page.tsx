@@ -1,11 +1,14 @@
 "use client"
+import Image from 'next/image'
+import { useState } from 'react'
+
 import { ClientList } from '@/components/ClientList'
 import { Client } from '@/types/client'
 import { clientsIcon, filterIcon } from '@/assets/images'
-import Image from 'next/image'
+import { SearchInput } from '@/components/SearchInput'
+import { ClientForm } from '@/components/ClientForm'
 
 import styles from '@/styles/Clients.module.scss'
-import { SearchInput } from '@/components/SearchInput'
 
 const clients: Client[] = [
     {
@@ -56,6 +59,8 @@ const clients: Client[] = [
 ]
 
 export default function ClientsPage() {
+    const [showAddClientForm, setShowAddClientForm] = useState(false)
+
     return (
         <div className={styles.clientsPage}>
             <div className={styles.header}>
@@ -64,13 +69,14 @@ export default function ClientsPage() {
                     <h1>Clientes</h1>
                 </div>
                 <div className={styles.actions}>
-                    <button className={styles.addClientBtn}>+ Adicionar cliente</button>
+                    <button className={styles.addClientBtn} onClick={() => setShowAddClientForm(true)}>+ Adicionar cliente</button>
                     <button className={styles.filterBtn}>
                         <Image src={filterIcon} alt="filter" />
                     </button>
                     <SearchInput onChange={() => { }} delay={400} />
                 </div>
             </div>
+            {showAddClientForm && <ClientForm close={() => setShowAddClientForm(false)} />}
             <ClientList rows={clients} columns={["client", "addCharge", "cpf", "email", "phone", "status"]} />
         </div>
     )

@@ -96,7 +96,7 @@ export const Header = () => {
                             inputId='phone'
                             title='Telefone'
                             name="phone"
-                            type='tel'
+                            type='text'
                             placeholder='Digite seu Telefone'
                         />
                     </div>

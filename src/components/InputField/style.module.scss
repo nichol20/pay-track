@@ -21,6 +21,7 @@
     line-height: 100%;
     font: $medium-body-text-font;
     @include display-flex(flex-start);
+    color: $colors-text-primary;
     
     .prefix {
         font: inherit;
@@ -36,6 +37,10 @@
         border: none;
         width: 100%;
         color: inherit;
+
+        &::placeholder {
+            color: $colors-text-secondary;
+        }
     }
 
     .showPasswordBtn {
