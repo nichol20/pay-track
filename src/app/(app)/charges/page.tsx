@@ -1,10 +1,12 @@
 "use client"
+import Image from 'next/image';
+
 import { fileIcon, filterIcon } from '@/assets/images';
 import { ChargeList } from '@/components/ChargeList';
 import { SearchInput } from '@/components/SearchInput';
-import styles from '@/styles/Charges.module.scss';
 import { Charge } from '@/types/charge';
-import Image from 'next/image';
+
+import styles from '@/styles/Charges.module.scss';
 
 const charges: Charge[] = [
     {
@@ -37,6 +39,8 @@ const charges: Charge[] = [
 ]
 
 export default function ChargesPage() {
+
+
     return (
         <div className={styles.chargesPage}>
             <div className={styles.header}>

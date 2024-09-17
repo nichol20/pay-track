@@ -106,3 +106,34 @@
         color: $colors-dark-error;
     }
 }
+
+.confirmationBox {
+    @include display-flex();
+    flex-direction: column;
+    gap: 20px;
+
+    .deletionMessage {
+        color: $colors-attention-text;
+        font-weight: bold;
+    }
+
+    .actions {
+        @include display-flex();
+        gap: 16px;
+
+        > button {
+            padding: 0 32px;
+            border-radius: 4px;
+        }
+
+        .cancelBtn {
+            background-color: $colors-light-wine;
+            color: $colors-medium-wine;
+        }
+
+        .confirmationBtn {
+            background-color: $colors-light-green;
+            color: $colors-dark-green;
+        }
+    }
+}

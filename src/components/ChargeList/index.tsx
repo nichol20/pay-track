@@ -4,11 +4,12 @@ import { Charge } from '@/types/charge'
 
 import styles from './style.module.scss'
 import Image from 'next/image'
-import { pencilIcon, trashCanIcon } from '@/assets/images'
+import { attentionIcon, pencilIcon, trashCanIcon } from '@/assets/images'
 import { centsToReal } from '@/utils/money'
 import { translateChargeStatus } from '@/utils/translation'
 import Link from 'next/link'
 import { ChargeForm } from '../ChargeForm'
+import { Modal } from '../Modal'
 
 export type ChargeListColumn =
     | "client"
@@ -57,6 +58,7 @@ const fieldNames: Omit<Record<ChargeListColumn, keyof Charge>, "options"> = {
 const columnsOrder: ChargeListColumn[] = ["client", "chargeId", "dueDate", "value", "status", "description", "options"]
 
 export const ChargeList = ({ columns, rows, className }: ChargeListProps) => {
+    const [showDeletionConfimationBox, setShowDeletionConfirmationBox] = useState(false)
     const [showEditChargeForm, setShowEditChargeForm] = useState(false)
     const [currentCharge, setCurrentCharge] = useState<Charge | null>(null)
     const sortedColumns = columns ? columnsOrder.filter(column => columns.includes(column)) : columnsOrder
@@ -116,13 +118,25 @@ export const ChargeList = ({ columns, rows, className }: ChargeListProps) => {
                                     <Image src={pencilIcon} alt='pencil' />
                                     <span>Editar</span>
                                 </button>
-                                <button className={styles.deleteBtn}>
+                                <button className={styles.deleteBtn} onClick={() => setShowDeletionConfirmationBox(true)}>
                                     <Image src={trashCanIcon} alt='trash can' />
                                     <span>Excluir</span>
                                 </button>
                             </div>}
                     </div>
                 ))}
+                {showDeletionConfimationBox &&
+                    <Modal className={styles.confirmationBox} close={() => setShowDeletionConfirmationBox(false)}>
+                        <Image src={attentionIcon} alt="attention" />
+                        <span className={styles.deletionMessage}>Tem certeza que deseja excluir esta cobrança?</span>
+                        <div className={styles.actions}>
+                            <button
+                                className={styles.cancelBtn}
+                                onClick={() => setShowDeletionConfirmationBox(false)}
+                            >Não</button>
+                            <button className={styles.confirmationBtn}>Sim</button>
+                        </div>
+                    </Modal>}
                 {showEditChargeForm &&
                     <ChargeForm
                         client={currentCharge ? { id: currentCharge.id, name: currentCharge.cliente_nome } : null}
