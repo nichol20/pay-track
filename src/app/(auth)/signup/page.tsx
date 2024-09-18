@@ -1,8 +1,12 @@
 "use client"
-import { CheckMark } from '@/components/CheckMark'
-import { InputField } from '@/components/InputField'
-import styles from '@/styles/SignUp.module.scss'
 import { FormEvent, useState } from 'react'
+
+import { CheckMark } from '@/components/CheckMark'
+import { ErrorMessage } from '@/components/ErrorMessage'
+import { InputField } from '@/components/InputField'
+import { signUp } from '@/utils/api'
+
+import styles from '@/styles/SignUp.module.scss'
 
 interface Step {
     title: string
@@ -29,14 +33,32 @@ const slideAnimation = `${styles.slide} 250ms ease-in-out both`
 export default function SignUpPage() {
     const [currentStep, setCurrentStep] = useState(0)
     const [isAnimating, setIsAnimating] = useState(false)
-    const [isLoadingResult, setIsLoadingResult] = useState(true)
+    const [registeredSuccessfully, setRegisteredSuccessfully] = useState(false)
+    const [passwordConfirmationError, setPasswordConfimationError] = useState(false)
 
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
+
+        const formData = new FormData(event.currentTarget)
+        const name = formData.get("name") as string
+        const email = formData.get("email") as string
+        const password = formData.get("password") as string
+        const confirmationPassword = formData.get("confirmationPassword") as string
+
+        if (password !== confirmationPassword) {
+            setPasswordConfimationError(true)
+            return
+        }
+
         updateStep(currentStep + 1)
-        setIsLoadingResult(true)
-        await new Promise(resolve => setTimeout(resolve, 4000))
-        setIsLoadingResult(false)
+
+        try {
+            await signUp(name, email, password)
+            setRegisteredSuccessfully(true)
+        } catch (error: any) {
+            alert(error.response.data.mensagem)
+            updateStep(0)
+        }
     }
 
     const updateStep = (newStep: number) => {
@@ -80,7 +102,7 @@ export default function SignUpPage() {
 
     const getInstructionStepClass = (index: number) => {
         let className = styles.instructionStep
-        if (index + 1 === steps.length && !isLoadingResult) {
+        if (index + 1 === steps.length && registeredSuccessfully) {
             className += ` ${styles.done}`
         } else if (index === currentStep) {
             className += ` ${styles.current}`
@@ -91,7 +113,7 @@ export default function SignUpPage() {
     }
 
     const renderInstructionStepCheckMark = (index: number) => {
-        if (index < currentStep || (index + 1 === steps.length && !isLoadingResult)) {
+        if (index < currentStep || (index + 1 === steps.length && registeredSuccessfully)) {
             return <CheckMark size={12} thickness={2} className={styles.checkMark} />
         }
         return <div className={styles.centerBall}></div>
@@ -154,13 +176,14 @@ export default function SignUpPage() {
                             required
                         />
                         <InputField
-                            inputId='confirmPassword'
+                            inputId='confirmationPassword'
                             title='Repita a senha*'
-                            name="confirmPassword"
+                            name="confirmationPassword"
                             type='password'
                             placeholder='••••••••'
                             required
                         />
+                        {passwordConfirmationError && <ErrorMessage message='As duas senhas precisam ser iguais ' />}
                         <div className={styles.actions}>
                             <button
                                 type='button'
@@ -172,16 +195,16 @@ export default function SignUpPage() {
                     </div>
                     <div className={`${styles.formStep} hide`}>
                         <div className={styles.feedbackBox}>
-                            <div className={`${styles.feedbackCheckMarkBox} ${isLoadingResult ? styles.loading : ""}`}>
-                                {!isLoadingResult && <CheckMark size={56} thickness={4} className={styles.checkMark} />}
+                            <div className={`${styles.feedbackCheckMarkBox} ${!registeredSuccessfully ? styles.loading : ""}`}>
+                                {registeredSuccessfully && <CheckMark size={56} thickness={4} className={styles.checkMark} />}
                             </div>
                             <span className={styles.feedbackMessage}>
-                                {isLoadingResult ? "Carregando..." : "Cadastro realizado com sucesso!"}
+                                {!registeredSuccessfully ? "Carregando..." : "Cadastro realizado com sucesso!"}
                             </span>
                         </div>
                         <a
                             href="/login"
-                            className={`${styles.loginLink} ${isLoadingResult ? styles.disable : ""}`}
+                            className={`${styles.loginLink} ${!registeredSuccessfully ? styles.disable : ""}`}
                         >Ir para Login</a>
                     </div>
                 </form>
