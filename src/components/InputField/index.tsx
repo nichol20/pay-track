@@ -1,11 +1,12 @@
 "use client"
 import Image from 'next/image'
-import { useState } from 'react'
+import { CSSProperties, useState } from 'react'
 
 import { TextareaField } from './TextareaField'
 import { eyeIcon, blockedEyeIcon } from '@/assets/images'
 
 import styles from './style.module.scss'
+import { ErrorMessage } from '../ErrorMessage'
 
 interface InputFieldProps {
     title: string
@@ -15,11 +16,13 @@ interface InputFieldProps {
     className?: string
     required?: boolean
     placeholder?: string
-    defaultValue?: string | number | readonly string[]
+    defaultValue?: string | number | readonly string[] | null
     prefix?: string
     min?: string | number
     step?: string | number
     onChange?: React.ChangeEventHandler<HTMLInputElement>
+    errorMessage?: string
+    readOnly?: boolean
 }
 
 const InputField = ({
@@ -34,10 +37,13 @@ const InputField = ({
     prefix,
     min,
     step,
-    onChange
+    onChange,
+    errorMessage = "",
+    readOnly = false
 }: InputFieldProps) => {
     const [showPassword, setShowPassword] = useState(false)
     const isPassword = type === "password"
+    const inputBoxStyle: CSSProperties | undefined = errorMessage.length > 0 ? { borderColor: "#E70000" } : undefined
 
     const getType = (): React.HTMLInputTypeAttribute => {
         if (isPassword) {
@@ -50,7 +56,7 @@ const InputField = ({
     return (
         <div className={`${styles.inputField} ${className}`}>
             <label htmlFor={inputId}>{title}</label>
-            <div className={styles.inputBox}>
+            <div className={styles.inputBox} style={inputBoxStyle}>
                 {prefix && <span className={styles.prefix}>{prefix}</span>}
                 <input
                     type={getType()}
@@ -58,11 +64,12 @@ const InputField = ({
                     id={inputId}
                     placeholder={placeholder}
                     spellCheck={false}
-                    defaultValue={defaultValue}
+                    defaultValue={defaultValue ?? undefined}
                     min={min}
                     step={step}
                     onChange={onChange}
                     required={required}
+                    readOnly={readOnly}
                 />
                 {isPassword && (
                     <button
@@ -77,6 +84,7 @@ const InputField = ({
                     </button>
                 )}
             </div>
+            <ErrorMessage message={errorMessage} />
         </div>
     )
 }

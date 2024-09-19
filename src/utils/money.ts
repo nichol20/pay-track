@@ -7,3 +7,7 @@ export const centsToReal = (value: number, prefix: boolean) => {
 
     return real
 }
+
+export const realToCents = (value: string) => {
+    return parseFloat(value) * 100
+}

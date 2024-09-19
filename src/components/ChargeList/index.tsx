@@ -1,15 +1,17 @@
 "use client"
 import { CSSProperties, useState } from 'react'
-import { Charge } from '@/types/charge'
-
-import styles from './style.module.scss'
 import Image from 'next/image'
+import Link from 'next/link'
+
+import { Charge, ClientDetailsCharge, SimpleCharge } from '@/types/charge'
 import { attentionIcon, pencilIcon, trashCanIcon } from '@/assets/images'
 import { centsToReal } from '@/utils/money'
 import { translateChargeStatus } from '@/utils/translation'
-import Link from 'next/link'
 import { ChargeForm } from '../ChargeForm'
 import { Modal } from '../Modal'
+
+import styles from './style.module.scss'
+import { deleteCharge } from '@/utils/api'
 
 export type ChargeListColumn =
     | "client"
@@ -20,10 +22,13 @@ export type ChargeListColumn =
     | "description"
     | "options"
 
+type Row = Charge | SimpleCharge | ClientDetailsCharge
+
 interface ChargeListProps {
     columns?: ChargeListColumn[]
-    rows: Charge[]
+    rows: Row[]
     className?: string
+    refresh?: () => void
 }
 
 const columnStyles: Record<ChargeListColumn, string> = {
@@ -47,7 +52,7 @@ const columnHeaders: Record<ChargeListColumn, string> = {
 }
 
 const fieldNames: Omit<Record<ChargeListColumn, keyof Charge>, "options"> = {
-    client: "cliente_nome",
+    client: "nome",
     chargeId: "id_cob",
     value: "valor",
     dueDate: "data_venc",
@@ -57,10 +62,11 @@ const fieldNames: Omit<Record<ChargeListColumn, keyof Charge>, "options"> = {
 
 const columnsOrder: ChargeListColumn[] = ["client", "chargeId", "dueDate", "value", "status", "description", "options"]
 
-export const ChargeList = ({ columns, rows, className }: ChargeListProps) => {
+export const ChargeList = ({ columns, rows, className, refresh }: ChargeListProps) => {
     const [showDeletionConfimationBox, setShowDeletionConfirmationBox] = useState(false)
     const [showEditChargeForm, setShowEditChargeForm] = useState(false)
     const [currentCharge, setCurrentCharge] = useState<Charge | null>(null)
+    const [currentClient, setCurrentClient] = useState<{ id: number, name: string } | null>(null)
     const sortedColumns = columns ? columnsOrder.filter(column => columns.includes(column)) : columnsOrder
     const headerStyle: CSSProperties = {
         gridTemplateColumns: sortedColumns
@@ -68,22 +74,32 @@ export const ChargeList = ({ columns, rows, className }: ChargeListProps) => {
             .join(' ')
     }
 
-    const renderRow = (row: Charge, columnName: ChargeListColumn) => {
+    const renderRow = (row: Row, columnName: ChargeListColumn) => {
         if (columnName === "options") return
-        let content = row[fieldNames[columnName]]
+
+        let content
+        const fieldName = fieldNames[columnName]
+        if (fieldName in row) {
+            // @ts-expect-error ...
+            content = row[fieldName]
+        }
         let contentClassName = styles.content
 
-        if (columnName === "value") {
-            content = centsToReal(content as number, true)
+        if (columnName === "value" && typeof content === "number") {
+            content = centsToReal(content, true)
         }
 
-        if (columnName === "status") {
+        if (columnName === "dueDate") {
+            content = new Date(content).toLocaleDateString()
+        }
+
+        if (columnName === "status" && typeof row.status === "string") {
             contentClassName += ` ${styles[translateChargeStatus(row.status)]}`
         }
 
         let contentElement = <span className={contentClassName}>{content}</span>
 
-        if (columnName === "client") {
+        if (columnName === "client" && "id" in row) {
             contentElement = <Link href={`clients/${row.id}`} className={contentClassName}>{content}</Link>
         }
 
@@ -94,9 +110,40 @@ export const ChargeList = ({ columns, rows, className }: ChargeListProps) => {
         )
     }
 
-    const handleEditChargeBtnClick = (charge: Charge) => {
+    const handleEditChargeBtnClick = (charge: Row) => {
+        if (!(("id") in charge)) return
+
         setCurrentCharge(charge)
+        setCurrentClient({
+            id: charge.id,
+            name: charge.nome
+        })
         setShowEditChargeForm(true)
+    }
+
+    const handleDeleteChargeBtnClick = (charge: Row) => {
+        if (!(("id") in charge)) return
+
+        setShowDeletionConfirmationBox(true)
+        setCurrentCharge(charge)
+        setCurrentClient({
+            id: charge.id,
+            name: charge.nome
+        })
+    }
+
+    const handleChargeDeletion = async () => {
+        setShowDeletionConfirmationBox(false)
+        if (currentCharge) {
+            try {
+                await deleteCharge(currentCharge.id_cob)
+                refresh && refresh()
+            } catch (error: any) {
+                if (error?.response?.data?.mensagem === "Essa cobrança não pode ser deletada") {
+                    // can't delete paid  or overdue charge
+                }
+            }
+        }
     }
 
     return (
@@ -118,7 +165,7 @@ export const ChargeList = ({ columns, rows, className }: ChargeListProps) => {
                                     <Image src={pencilIcon} alt='pencil' />
                                     <span>Editar</span>
                                 </button>
-                                <button className={styles.deleteBtn} onClick={() => setShowDeletionConfirmationBox(true)}>
+                                <button className={styles.deleteBtn} onClick={() => handleDeleteChargeBtnClick(row)}>
                                     <Image src={trashCanIcon} alt='trash can' />
                                     <span>Excluir</span>
                                 </button>
@@ -134,13 +181,18 @@ export const ChargeList = ({ columns, rows, className }: ChargeListProps) => {
                                 className={styles.cancelBtn}
                                 onClick={() => setShowDeletionConfirmationBox(false)}
                             >Não</button>
-                            <button className={styles.confirmationBtn}>Sim</button>
+                            <button
+                                className={styles.confirmationBtn}
+                                onClick={handleChargeDeletion}
+                            >Sim</button>
                         </div>
                     </Modal>}
                 {showEditChargeForm &&
                     <ChargeForm
-                        client={currentCharge ? { id: currentCharge.id, name: currentCharge.cliente_nome } : null}
+                        client={currentClient!}
+                        charge={currentCharge}
                         close={() => setShowEditChargeForm(false)}
+                        onSubmit={refresh}
                     />}
             </div>
         </div>

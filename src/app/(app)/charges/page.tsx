@@ -7,39 +7,20 @@ import { SearchInput } from '@/components/SearchInput';
 import { Charge } from '@/types/charge';
 
 import styles from '@/styles/Charges.module.scss';
-
-const charges: Charge[] = [
-    {
-        id: 1,
-        cliente_nome: "Andressa",
-        data_venc: "2001-20-12",
-        descricao: "paosodjjap odjsap odjasop dosaihd saoi hdosai hdosia hdoias hdoiah soidh asoi",
-        id_cob: "d8as0d98-da8sd09a8a-312d1s12-s12s212",
-        status: "Paga",
-        valor: 900
-    },
-    {
-        id: 1,
-        cliente_nome: "Andressa",
-        data_venc: "2001-20-12",
-        descricao: "paosodjjap odjsap odjasop dosaihd saoi hdosai hdosia hdoias hdoiah soidh asoi",
-        id_cob: "d8as0d98-da8sd09a8a-312d1s12-s12s212",
-        status: "Pendente",
-        valor: 900
-    },
-    {
-        id: 999,
-        cliente_nome: "Andressa",
-        data_venc: "2001-20-12",
-        descricao: "paosodjjap odjsap odjasop dosaihd saoi hdosai hdosia hdoias hdoiah soidh asoi",
-        id_cob: "d8as0d98-da8sd09a8a-312d1s12-s12s212",
-        status: "Vencida",
-        valor: 900
-    },
-]
+import { useEffect, useState } from 'react';
+import { getCharges } from '@/utils/api';
 
 export default function ChargesPage() {
+    const [charges, setCharges] = useState<Charge[]>([])
 
+    const fetchData = async () => {
+        const data = await getCharges()
+        setCharges(data)
+    }
+
+    useEffect(() => {
+        fetchData()
+    }, [])
 
     return (
         <div className={styles.chargesPage}>
@@ -55,7 +36,7 @@ export default function ChargesPage() {
                     <SearchInput onChange={() => { }} delay={400} />
                 </div>
             </div>
-            <ChargeList rows={charges} />
+            <ChargeList rows={charges} refresh={fetchData} />
         </div>
     )
 }

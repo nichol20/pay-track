@@ -1,24 +1,94 @@
-
+"use client"
 import { Charge } from '@/types/charge'
 import { Modal } from '../Modal'
 
 import styles from './style.module.scss'
 import { InputField, TextareaField } from '../InputField'
-import { centsToReal } from '@/utils/money'
+import { centsToReal, realToCents } from '@/utils/money'
 import { CheckMark } from '../CheckMark'
 import Image from 'next/image'
 import { fileIcon } from '@/assets/images'
+import { useState } from 'react'
+import { addCharge, updateCharge } from '@/utils/api'
+import { formatToInputDate } from '@/utils/date'
 
 interface ChargeFormProps {
     client: {
         id: number
         name: string
-    } | null
-    charge?: Charge
+    }
+    charge?: Charge | null
+    onSubmit?: () => void
     close: () => void
 }
 
-export const ChargeForm = ({ client, charge, close }: ChargeFormProps) => {
+const requiredFields = ["description", "date"]
+
+export const ChargeForm = ({ client, charge, close, onSubmit }: ChargeFormProps) => {
+    const [requiredFieldsMissing, setRequiredFieldsMissing] = useState<string[]>([])
+
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault()
+        const formData = new FormData(event.currentTarget)
+
+        const fieldsMissing: string[] = []
+        requiredFields.forEach(fieldName => {
+            const field = formData.get(fieldName) as string
+            if (field.length === 0) {
+                fieldsMissing.push(fieldName)
+            }
+        })
+        if (fieldsMissing.length > 0) {
+            setRequiredFieldsMissing(fieldsMissing)
+            return
+        }
+
+        const description = formData.get("description") as string
+        const date = formData.get("date") as string
+        const value = formData.get("value") as string
+        const status = formData.get("status") as string
+
+        try {
+            if (charge) {
+                await updateCharge({
+                    cliente_id: client.id,
+                    data_venc: date,
+                    descricao: description,
+                    id_cob: charge.id_cob,
+                    status: status === "paid" ? "Paga" : "Pendente",
+                    valor: realToCents(value)
+                })
+                onSubmit && onSubmit()
+                close()
+                return
+            }
+
+            await addCharge({
+                cliente_id: client.id,
+                data_venc: date,
+                descricao: description,
+                status: status === "paid" ? "Paga" : "Pendente",
+                valor: realToCents(value)
+            })
+            onSubmit && onSubmit()
+            close()
+        } catch (error: any) {
+
+        }
+    }
+
+    const getErrorMessage = (inputName: string): string => {
+        if (requiredFieldsMissing.includes(inputName)) {
+            return "Esse campo deve ser preenchido"
+        }
+
+        return ""
+    }
+
+    const handleInputChange = (inputName: string) => {
+        // reset errors
+        setRequiredFieldsMissing(prev => prev.filter(n => n !== inputName))
+    }
 
     const handleMoneyInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const currentValue = event.target.value
@@ -29,26 +99,29 @@ export const ChargeForm = ({ client, charge, close }: ChargeFormProps) => {
 
     return (
         <Modal close={close}>
-            <form className={styles.chargeForm}>
+            <form className={styles.chargeForm} onSubmit={handleSubmit}>
                 <div className={styles.titleBox}>
                     <Image src={fileIcon} alt="file" />
                     {<span className={styles.title}>{charge ? "Edição de Cobrança" : "Cadastro de Cobrança"}</span>}
                 </div>
                 <InputField
                     inputId='name'
-                    title='Nome*'
+                    title='Nome'
                     name="name"
                     type='text'
                     placeholder='Digite o Nome'
-                    defaultValue={client?.name}
-                    required
+                    defaultValue={client.name}
+                    readOnly
                 />
 
                 <TextareaField
                     textareaId="description"
+                    name='description'
                     title='Descrição*'
                     placeholder='Digite a descrição'
                     defaultValue={charge?.descricao}
+                    errorMessage={getErrorMessage("description")}
+                    onChange={() => handleInputChange("description")}
                 />
                 <div className={styles.fieldGroup}>
                     <InputField
@@ -57,7 +130,9 @@ export const ChargeForm = ({ client, charge, close }: ChargeFormProps) => {
                         name="date"
                         type='date'
                         placeholder='Data de Vencimento'
-                        required
+                        defaultValue={charge ? formatToInputDate(charge.data_venc) : undefined}
+                        errorMessage={getErrorMessage("date")}
+                        onChange={() => handleInputChange("date")}
                     />
                     <InputField
                         inputId='value'
@@ -66,15 +141,14 @@ export const ChargeForm = ({ client, charge, close }: ChargeFormProps) => {
                         type='number'
                         min='0.01'
                         step='0.01'
-                        defaultValue={charge ? centsToReal(charge.valor, false) : 0.01}
+                        defaultValue={charge ? centsToReal(charge.valor, false) : 1.00}
                         prefix='R$'
                         onChange={handleMoneyInputChange}
-                        required
                     />
                 </div>
                 <div className={styles.radioInput}>
                     <span className={styles.title}>Status*</span>
-                    <label className={styles.payedLabel}>
+                    <label className={styles.paidLabel}>
                         <div className={styles.checkMarkBox}>
                             <CheckMark size={12} thickness={2} className={styles.checkMark} />
                         </div>
@@ -82,7 +156,7 @@ export const ChargeForm = ({ client, charge, close }: ChargeFormProps) => {
                         <input
                             type="radio"
                             name="status"
-                            value="payed"
+                            value="paid"
                             defaultChecked={charge ? charge.status === "Paga" : true}
                         />
                     </label>

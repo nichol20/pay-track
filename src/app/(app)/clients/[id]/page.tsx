@@ -1,42 +1,15 @@
 "use client"
 import { clientsIcon, pencilIcon } from '@/assets/images'
+import { ChargeForm } from '@/components/ChargeForm'
 import { ChargeList } from '@/components/ChargeList'
 import { ClientForm } from '@/components/ClientForm'
 import styles from '@/styles/Client.module.scss'
-import { Client } from '@/types/client'
+import { Client, ClientDetails, ClientWithoutId } from '@/types/client'
+import { getClientDetails } from '@/utils/api'
 import { translateClientProperty } from '@/utils/translation'
 import Image from 'next/image'
-import { useState } from 'react'
-
-const charges = [
-    {
-        id: 1,
-        cliente_nome: "Andressa",
-        data_venc: "2001-20-12",
-        descricao: "paosodjjap odjsap odjasop dosaihd saoi hdosai hdosia hdoias hdoiah soidh asoi",
-        id_cob: "d8as0d98-da8sd09a8a-312d1s12-s12s212",
-        status: "Paga",
-        valor: 900
-    },
-    {
-        id: 1,
-        cliente_nome: "Andressa",
-        data_venc: "2001-20-12",
-        descricao: "paosodjjap odjsap odjasop dosaihd saoi hdosai hdosia hdoias hdoiah soidh asoi",
-        id_cob: "d8as0d98-da8sd09a8a-312d1s12-s12s212",
-        status: "Pendente",
-        valor: 900
-    },
-    {
-        id: 999,
-        cliente_nome: "Andressa",
-        data_venc: "2001-20-12",
-        descricao: "paosodjjap odjsap odjasop dosaihd saoi hdosai hdosia hdoias hdoiah soidh asoi",
-        id_cob: "d8as0d98-da8sd09a8a-312d1s12-s12s212",
-        status: "Vencida",
-        valor: 900
-    },
-]
+import { useParams } from 'next/navigation'
+import { useCallback, useEffect, useState } from 'react'
 
 type TableTitles = Omit<Record<keyof Client, string>, "id" | "usuario_id" | "nome" | "status">
 
@@ -53,36 +26,36 @@ const tableTitles: TableTitles = {
 }
 
 export default function ClientPage() {
-    const [client, setClient] = useState<Client>({
-        id: 1,
-        nome: "Andressa",
-        email: "andressa@emaill.com",
-        telefone: "93218 0139",
-        status: "Inadimplente",
-        usuario_id: 1,
-        cpf: "123.456.789-00",
-        cep: null,
-        bairro: null,
-        cidade: null,
-        complemento: null,
-        endereco: null,
-        uf: null,
-    })
+    const params = useParams<{ id: string }>()
+    const [clientDetails, setClientDetails] = useState<ClientDetails | null>(null)
     const [showEditClientForm, setShowEditClientForm] = useState(false)
+    const [showAddChargeForm, setShowAddChargeForm] = useState(false)
 
     const renderTableFields = (k: string) => {
-        const key = k as keyof Client
+        const key = k as keyof ClientWithoutId
 
         if (["id", "usuario_id", "nome", "status"].includes(key)) return
 
         return (
             <div key={key} className={styles.field} style={{ gridArea: translateClientProperty(key) }}>
                 <span className={styles.title}>{tableTitles[key as keyof TableTitles]}</span>
-                <span className={styles.content}>{client[key] === null ? "-" : client[key]}</span>
+                <span className={styles.content}>
+                    {!clientDetails?.client[key] ? "-" : clientDetails?.client[key]}
+                </span>
             </div>
         )
 
     }
+
+    const fetchData = useCallback(async () => {
+        const clientD = await getClientDetails(params.id)
+        setClientDetails(clientD)
+    }, [params.id])
+
+    useEffect(() => {
+        fetchData()
+    }, [fetchData])
+
     return (
         <div className={styles.clientPage}>
             <div className={styles.titleBox}>
@@ -100,21 +73,36 @@ export default function ClientPage() {
                 </div>
 
                 <div className={styles.info}>
-                    {Object.keys(client).map(renderTableFields)}
+                    {Object.keys(clientDetails ? clientDetails?.client : {}).map(renderTableFields)}
                 </div>
-                {showEditClientForm && <ClientForm client={client} close={() => setShowEditClientForm(false)} />}
+                {showEditClientForm &&
+                    <ClientForm
+                        client={clientDetails ? {
+                            ...clientDetails.client,
+                            id: parseInt(params.id),
+                        } : undefined}
+                        close={() => setShowEditClientForm(false)}
+                    />}
             </div>
 
             <div className={styles.chargeListBox}>
                 <div className={styles.titleBox}>
                     <span className={styles.title}>Cobranças do Cliente</span>
-                    <button className={styles.addChargeBtn}>+ Nova cobrança</button>
+                    <button
+                        className={styles.addChargeBtn}
+                        onClick={() => setShowAddChargeForm(true)}
+                    >+ Nova cobrança</button>
                 </div>
                 <ChargeList
                     className={styles.list}
-                    rows={charges}
-                    columns={["chargeId", "value", "status", "description", "dueDate"]}
+                    rows={clientDetails ? clientDetails.charges : []}
+                    columns={["chargeId", "value", "status", "description", "dueDate", "options"]}
+                    refresh={fetchData}
                 />
+                {showAddChargeForm && <ChargeForm
+                    client={{ id: parseInt(params.id), name: clientDetails ? clientDetails.client.nome : "" }}
+                    close={() => setShowAddChargeForm(false)}
+                />}
             </div>
         </div>
     )

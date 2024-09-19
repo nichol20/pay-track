@@ -55,6 +55,9 @@
 .clientRowItem {
     .content {
         color: $colors-text-secondary;
+    }
+
+    a.content {
         text-decoration: none;
         
         &:hover {

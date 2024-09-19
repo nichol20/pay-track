@@ -48,7 +48,7 @@
 }
 
 .chargeTables {
-    @include display-flex();
+    @include display-flex(center, flex-start);
     width: 100%;
     gap: 32px;
 }
@@ -106,7 +106,7 @@
 }
 
 .clientTables {
-    @include display-flex();
+    @include display-flex(center, flex-start);
     width: 100%;
     gap: 32px;
 }

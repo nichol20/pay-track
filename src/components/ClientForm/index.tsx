@@ -1,21 +1,113 @@
 
-import { Client } from '@/types/client'
+import { Client, ClientRequest } from '@/types/client'
 import styles from './style.module.scss'
 import { Modal } from '../Modal'
 import { InputField } from '../InputField'
 import Image from 'next/image'
 import { clientsIcon } from '@/assets/images'
+import { useState } from 'react'
+import { registerClient, updateClient } from '@/utils/api'
 
 interface ClientFormProps {
     client?: Client
     close: () => void
+    onSubmit?: () => void
 }
 
-export const ClientForm = ({ client, close }: ClientFormProps) => {
+const requiredFields = ["name", "email", "cpf", "phone"]
+
+export const ClientForm = ({ client, close, onSubmit }: ClientFormProps) => {
+    const [requiredFieldsMissing, setRequiredFieldsMissing] = useState<string[]>([])
+    const [emailAlreadyExists, setEmailAlreadyExists] = useState(false)
+    const [cpfAlreadyExists, setCpfAlreadyExists] = useState(false)
+
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault()
+
+        const formData = new FormData(event.currentTarget)
+
+        const fieldsMissing: string[] = []
+        requiredFields.forEach(fieldName => {
+            const field = formData.get(fieldName) as string
+            if (field.length === 0) {
+                fieldsMissing.push(fieldName)
+            }
+        })
+        if (fieldsMissing.length > 0) {
+            setRequiredFieldsMissing(fieldsMissing)
+            return
+        }
+
+        const name = formData.get("name") as string
+        const email = formData.get("email") as string
+        const cpf = formData.get("cpf") as string
+        const phone = formData.get("phone") as string
+        const address = formData.get("address") as string
+        const complement = formData.get("complement") as string
+        const cep = formData.get("cep") as string
+        const neighborhood = formData.get("neighborhood") as string
+        const city = formData.get("city") as string
+        const uf = formData.get("uf") as string
+
+        const newClient: ClientRequest = {
+            bairro: neighborhood,
+            cep,
+            cidade: city,
+            complemento: complement,
+            cpf,
+            email,
+            endereco: address,
+            nome: name,
+            telefone: phone,
+            uf
+        }
+
+        try {
+            if (client) {
+                await updateClient(client.id, newClient)
+                onSubmit && onSubmit()
+                close()
+                return
+            }
+
+            await registerClient(newClient)
+            onSubmit && onSubmit()
+            close()
+        } catch (error: any) {
+            if (error?.response?.data?.mensagem === "O e-mail já cadastrado") {
+                setEmailAlreadyExists(true)
+            }
+            if (error?.response?.data?.mensagem === "O cpf já cadastrado") {
+                setCpfAlreadyExists(true)
+            }
+        }
+    }
+
+    const getErrorMessage = (inputName: string): string => {
+        if (inputName === "email" && emailAlreadyExists) {
+            return "E-mail já cadastrado"
+        }
+        if (inputName === "cpf" && cpfAlreadyExists) {
+            return "CPF já cadastrado"
+        }
+        if (requiredFieldsMissing.includes(inputName)) {
+            return "Esse campo deve ser preenchido"
+        }
+
+        return ""
+    }
+
+    const handleInputChange = (inputName: string) => {
+        // reset errors
+        setRequiredFieldsMissing(prev => prev.filter(n => n !== inputName))
+
+        if (inputName === "email") setEmailAlreadyExists(false)
+        if (inputName === "cpf") setCpfAlreadyExists(false)
+    }
 
     return (
         <Modal close={close}>
-            <form className={styles.clientForm}>
+            <form className={styles.clientForm} onSubmit={handleSubmit}>
                 <div className={styles.titleBox}>
                     <Image src={clientsIcon} alt="clients" />
                     {<span className={styles.title}>{client ? "Editar Cliente" : "Cadastro do Cliente"}</span>}
@@ -27,7 +119,8 @@ export const ClientForm = ({ client, close }: ClientFormProps) => {
                     type='text'
                     placeholder='Digite o Nome'
                     defaultValue={client?.nome}
-                    required
+                    errorMessage={getErrorMessage("name")}
+                    onChange={() => handleInputChange("name")}
                 />
                 <InputField
                     inputId='email'
@@ -36,7 +129,8 @@ export const ClientForm = ({ client, close }: ClientFormProps) => {
                     type='email'
                     placeholder='Digite o E-mail'
                     defaultValue={client?.email}
-                    required
+                    errorMessage={getErrorMessage("email")}
+                    onChange={() => handleInputChange("email")}
                 />
                 <div className={styles.fieldGroup}>
                     <InputField
@@ -46,7 +140,8 @@ export const ClientForm = ({ client, close }: ClientFormProps) => {
                         type='text'
                         placeholder='Digite o CPF'
                         defaultValue={client?.cpf}
-                        required
+                        errorMessage={getErrorMessage("cpf")}
+                        onChange={() => handleInputChange("cpf")}
                     />
                     <InputField
                         inputId='phone'
@@ -55,7 +150,8 @@ export const ClientForm = ({ client, close }: ClientFormProps) => {
                         type='text'
                         placeholder='Digite o Telefone'
                         defaultValue={client?.telefone}
-                        required
+                        errorMessage={getErrorMessage("phone")}
+                        onChange={() => handleInputChange("phone")}
                     />
                 </div>
                 <InputField

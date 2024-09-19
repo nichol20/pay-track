@@ -1,65 +1,28 @@
 "use client"
 import Image from 'next/image'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { ClientList } from '@/components/ClientList'
-import { Client } from '@/types/client'
 import { clientsIcon, filterIcon } from '@/assets/images'
 import { SearchInput } from '@/components/SearchInput'
 import { ClientForm } from '@/components/ClientForm'
 
 import styles from '@/styles/Clients.module.scss'
-
-const clients: Client[] = [
-    {
-        id: 1,
-        nome: "Andressa",
-        email: "andressa@emaill.com",
-        telefone: "93218 0139",
-        status: "Inadimplente",
-        usuario_id: 1,
-        cpf: "123.456.789-00",
-        cep: null,
-        bairro: null,
-        cidade: null,
-        complemento: null,
-        endereco: null,
-        uf: null,
-    },
-    {
-        id: 2,
-        nome: "Jorge",
-        email: "Jorge@emaill.com",
-        telefone: "93218 0139",
-        status: "Inadimplente",
-        usuario_id: 2,
-        cpf: "123.456.789-00",
-        cep: null,
-        bairro: null,
-        cidade: null,
-        complemento: null,
-        endereco: null,
-        uf: null,
-    },
-    {
-        id: 3,
-        nome: "Juão",
-        email: "Juão@emaill.com",
-        telefone: "93218 0139",
-        status: "Em dia",
-        usuario_id: 3,
-        cpf: "123.456.789-00",
-        cep: null,
-        bairro: null,
-        cidade: null,
-        complemento: null,
-        endereco: null,
-        uf: null,
-    },
-]
+import { getClients } from '@/utils/api'
+import { Client } from '@/types/client'
 
 export default function ClientsPage() {
     const [showAddClientForm, setShowAddClientForm] = useState(false)
+    const [clients, setClients] = useState<Client[]>([])
+
+    const fetchData = async () => {
+        const data = await getClients()
+        setClients(data)
+    }
+
+    useEffect(() => {
+        fetchData()
+    }, [])
 
     return (
         <div className={styles.clientsPage}>
@@ -76,7 +39,7 @@ export default function ClientsPage() {
                     <SearchInput onChange={() => { }} delay={400} />
                 </div>
             </div>
-            {showAddClientForm && <ClientForm close={() => setShowAddClientForm(false)} />}
+            {showAddClientForm && <ClientForm close={() => setShowAddClientForm(false)} onSubmit={fetchData} />}
             <ClientList rows={clients} columns={["client", "addCharge", "cpf", "email", "phone", "status"]} />
         </div>
     )

@@ -10,6 +10,7 @@
     .fieldGroup {
         @include display-flex();
         gap: 20px;
+        width: 100%;
     }
 }
 
@@ -59,7 +60,7 @@
             }
         }
 
-        &.payedLabel:has(> input:checked), &.pendingLabel:has(> input:checked) {
+        &.paidLabel:has(> input:checked), &.pendingLabel:has(> input:checked) {
             .checkMarkBox {
                 background-color: $colors-medium-green;
 

@@ -40,7 +40,9 @@
     .userImg {
         background-color: $colors-gray-6;
         border-radius: 100%;
-        padding: 9px;
+        width: 42px;
+        height: 42px;
+        @include display-flex();
         font: $subtitle-font;
         color: $colors-medium-green;
     }
@@ -113,6 +115,7 @@
 .fieldGroup {
     @include display-flex();
     gap: 24px;
+    width: 100%;
 }
 
 .submitBtn {

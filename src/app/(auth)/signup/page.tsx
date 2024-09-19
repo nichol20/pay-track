@@ -183,7 +183,7 @@ export default function SignUpPage() {
                             placeholder='••••••••'
                             required
                         />
-                        {passwordConfirmationError && <ErrorMessage message='As duas senhas precisam ser iguais ' />}
+                        {passwordConfirmationError && <ErrorMessage message='As duas senhas precisam ser iguais' />}
                         <div className={styles.actions}>
                             <button
                                 type='button'

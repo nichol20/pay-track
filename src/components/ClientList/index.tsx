@@ -3,7 +3,7 @@ import { CSSProperties, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 
-import { Client } from '@/types/client'
+import { Client, SimpleClient } from '@/types/client'
 import { translateClientStatus } from '@/utils/translation'
 import { addFileIcon } from '@/assets/images'
 import { ChargeForm } from '../ChargeForm'
@@ -19,9 +19,10 @@ export type ClientListColumn =
     | "addCharge"
     | "clientId"
 
+type Row = Client | SimpleClient
 interface ClientListProps {
     columns?: ClientListColumn[]
-    rows: Client[]
+    rows: Row[]
     className?: string
 }
 
@@ -58,7 +59,7 @@ const columnsOrder: ClientListColumn[] = ["client", "clientId", "cpf", "email", 
 
 export const ClientList = ({ columns, rows, className }: ClientListProps) => {
     const [showAddChargeForm, setShowAddChargeForm] = useState(false)
-    const [currentClient, setCurrentClient] = useState<Client | null>(null)
+    const [currentClient, setCurrentClient] = useState<Row | null>(null)
     const sortedColumns = columns ? columnsOrder.filter(column => columns.includes(column)) : columnsOrder
     const headerStyle: CSSProperties = {
         gridTemplateColumns: sortedColumns
@@ -66,12 +67,18 @@ export const ClientList = ({ columns, rows, className }: ClientListProps) => {
             .join(' ')
     }
 
-    const renderRow = (row: Client, columnName: ClientListColumn) => {
+    const renderRow = (row: Row, columnName: ClientListColumn) => {
         if (columnName === "addCharge") return
-        const content = row[fieldNames[columnName]]
+        let content
         let contentClassName = styles.content
+        const fieldName = fieldNames[columnName]
 
-        if (columnName === "status") {
+        if (fieldName in row) {
+            // @ts-expect-error ...
+            content = row[fieldName]
+        }
+
+        if (columnName === "status" && "status" in row) {
             contentClassName += ` ${styles[translateClientStatus(row.status)]}`
         }
 
@@ -88,7 +95,7 @@ export const ClientList = ({ columns, rows, className }: ClientListProps) => {
         )
     }
 
-    const handleAddChargeBtnClick = (client: Client) => {
+    const handleAddChargeBtnClick = (client: Row) => {
         setCurrentClient(client)
         setShowAddChargeForm(true)
     }
@@ -115,9 +122,9 @@ export const ClientList = ({ columns, rows, className }: ClientListProps) => {
                             </div>}
                     </div>
                 ))}
-                {showAddChargeForm &&
+                {showAddChargeForm && currentClient &&
                     <ChargeForm
-                        client={currentClient ? { id: currentClient.id, name: currentClient.nome } : null}
+                        client={{ id: currentClient.id, name: currentClient.nome }}
                         close={() => setShowAddChargeForm(false)}
                     />}
             </div>
