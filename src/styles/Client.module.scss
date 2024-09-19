@@ -73,10 +73,11 @@
 }
 
 .chargeListBox {
-    border-top-left-radius: 20px;
-    border-top-right-radius: 20px;
+    border-radius: 20px;
+    overflow: hidden;
     @include light-box-shadow();   
     background-color: $colors-table-bg;
+    width: 100%;
 
     .titleBox {
         @include display-flex(space-between);
@@ -90,8 +91,7 @@
     }
 
     .list {
-        border-top-left-radius: 0px;
-        border-top-right-radius: 0px;
+        border-radius: 0;
         box-shadow: none;
     }
 

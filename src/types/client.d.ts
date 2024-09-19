@@ -20,6 +20,15 @@ export interface Client {
 
 export type ClientWithoutId = Omit<Client, "id">
 
+export interface SearchedClient {
+    id: number
+    nome: string
+    cpf: string
+    email: string
+    telefone: string
+    status: ClientStatus
+}
+
 export interface ClientRequest {
     nome: string
     cpf: string

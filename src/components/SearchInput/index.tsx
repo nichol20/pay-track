@@ -14,7 +14,7 @@ interface SearchInputProps {
 
 export const SearchInput = function SearchInput({ onChange, defaultValue = "", delay = 0 }: SearchInputProps) {
     const [value, setValue] = useState(defaultValue)
-    const [isEmpty, setIsEmpty] = useState(true)
+    const [isEmpty, setIsEmpty] = useState(defaultValue.length === 0)
 
     const handleChange = (query: string) => {
         setValue(query)

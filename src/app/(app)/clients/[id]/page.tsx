@@ -60,7 +60,7 @@ export default function ClientPage() {
         <div className={styles.clientPage}>
             <div className={styles.titleBox}>
                 <Image src={clientsIcon} alt="clients" />
-                <h1>Sara Lage Silva</h1>
+                <h1>{clientDetails?.client.nome}</h1>
             </div>
 
             <div className={styles.clientTableInfo}>
@@ -82,6 +82,7 @@ export default function ClientPage() {
                             id: parseInt(params.id),
                         } : undefined}
                         close={() => setShowEditClientForm(false)}
+                        onSubmit={fetchData}
                     />}
             </div>
 

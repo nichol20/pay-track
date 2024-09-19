@@ -1,7 +1,7 @@
 import { User, UserDetails } from "@/types/user"
 import { http } from "./http"
 import { Charge, ChargesDashboard, ChargeStatus } from "@/types/charge"
-import { Client, ClientDetails, ClientRequest, ClientsDashboard } from "@/types/client"
+import { Client, ClientDetails, ClientRequest, ClientsDashboard, SearchedClient } from "@/types/client"
 
 // ESSE BACKEND TA UMA BAGUNÇA
 
@@ -58,6 +58,16 @@ export const updateUser = async (newUser: UpdateUserArgs): Promise<UpdateUserRes
 }
 
 // ------------ CLIENTS ------------
+export interface SearchClientArgs {
+    searchTerm?: string
+    orderBy?: "nome"
+    typeOrderBy?: "asc" | "desc"
+}
+
+export const searchClient = async (params: SearchClientArgs): Promise<SearchedClient[]> => {
+    const res = await http.get<SearchedClient[]>("/searchClients", { params })
+    return res.data
+}
 
 export const getClientsDashboard = async (): Promise<ClientsDashboard> => {
     const res = await http.get<ClientsDashboard>("/dashboardClients")
@@ -95,6 +105,13 @@ export const getClients = async () => {
 }
 
 // ------------ CHARGES  ------------
+
+export const searchCharge = async (searchTerm: string): Promise<Charge[]> => {
+    const res = await http.get<Charge[]>("/searchCharges", {
+        params: { searchTerm }
+    })
+    return res.data
+}
 
 export const getChargesDashboard = async (): Promise<ChargesDashboard> => {
     const res = await http.get<ChargesDashboard>("/dashboardCharges")
