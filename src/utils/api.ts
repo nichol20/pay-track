@@ -5,6 +5,7 @@ import { Client, ClientDetails, ClientRequest, ClientsDashboard } from "@/types/
 
 // ESSE BACKEND TA UMA BAGUNÇA
 
+// ------------ USER ------------
 export interface LoginResponse {
     user: User
     token: string
@@ -42,10 +43,21 @@ export const getUser = async (id: number, token: string): Promise<GetUserRespons
     return res.data
 }
 
-export const getChargesDashboard = async (): Promise<ChargesDashboard> => {
-    const res = await http.get<ChargesDashboard>("/dashboardCharges")
+interface UpdateUserResponse {
+    mensagem: string
+    user: User
+}
+
+interface UpdateUserArgs extends Omit<User, "id"> {
+    senha: string
+}
+
+export const updateUser = async (newUser: UpdateUserArgs): Promise<UpdateUserResponse> => {
+    const res = await http.put<UpdateUserResponse>("/updateUser", newUser)
     return res.data
 }
+
+// ------------ CLIENTS ------------
 
 export const getClientsDashboard = async (): Promise<ClientsDashboard> => {
     const res = await http.get<ClientsDashboard>("/dashboardClients")
@@ -54,11 +66,6 @@ export const getClientsDashboard = async (): Promise<ClientsDashboard> => {
 
 export const getClientDetails = async (id: number | string): Promise<ClientDetails> => {
     const res = await http.get<ClientDetails>(`/clientDetails/${id}`)
-    return res.data
-}
-
-export const getCharges = async (): Promise<Charge[]> => {
-    const res = await http.get<Charge[]>(`/allCharges`)
     return res.data
 }
 
@@ -84,6 +91,18 @@ export const updateClient = async (id: number | string, client: ClientRequest): 
 
 export const getClients = async () => {
     const res = await http.get<Client[]>("/consultClient")
+    return res.data
+}
+
+// ------------ CHARGES  ------------
+
+export const getChargesDashboard = async (): Promise<ChargesDashboard> => {
+    const res = await http.get<ChargesDashboard>("/dashboardCharges")
+    return res.data
+}
+
+export const getCharges = async (): Promise<Charge[]> => {
+    const res = await http.get<Charge[]>(`/allCharges`)
     return res.data
 }
 
@@ -138,19 +157,5 @@ export interface DeleteChargeResponse {
 
 export const deleteCharge = async (id: string): Promise<DeleteChargeResponse> => {
     const res = await http.delete<DeleteChargeResponse>(`/deleteCharge/${id}`)
-    return res.data
-}
-
-interface UpdateUserResponse {
-    mensagem: string
-    user: User
-}
-
-interface UpdateUserArgs extends Omit<User, "id"> {
-    senha: string
-}
-
-export const updateUser = async (newUser: UpdateUserArgs): Promise<UpdateUserResponse> => {
-    const res = await http.put<UpdateUserResponse>("/updateUser", newUser)
     return res.data
 }

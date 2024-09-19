@@ -82,12 +82,22 @@ export const Header = () => {
             return "Esse campo deve ser preenchido"
         }
 
-        if ((inputName === "password" || inputName === "confirmationPassword") && passwordConfirmationError) {
-            return "As duas senhas precisam ser iguais"
+        if (passwordConfirmationError) {
+            if (inputName === "password") {
+                return "As duas senhas precisam ser iguais"
+            }
+            if (inputName === "confirmationPassword") {
+                return " "
+            }
         }
 
-        if ((inputName === "password" || inputName === "confirmationPassword") && weakPasswordError) {
-            return "Sua senha deverá conter no mínimo 8 caracteres sendo eles: 1 letra maiúscula, 1 número e 1 símbolo @,$,!,%,? ou &"
+        if (weakPasswordError) {
+            if (inputName === "password") {
+                return "Sua senha deverá conter no mínimo 8 caracteres sendo eles: 1 letra maiúscula, 1 número e 1 símbolo @,$,!,%,? ou &"
+            }
+            if (inputName === "confirmationPassword") {
+                return " "
+            }
         }
 
         if (inputName === "email" && emailAlreadyExists) {
@@ -106,6 +116,9 @@ export const Header = () => {
         if (inputName === "password" || inputName === "confirmationPassword") {
             setPasswordConfimationError(false)
             setWeakPasswordError(false)
+        }
+        if (inputName === "email") {
+            setEmailAlreadyExists(false)
         }
     }
 

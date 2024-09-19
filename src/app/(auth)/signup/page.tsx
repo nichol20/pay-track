@@ -2,7 +2,6 @@
 import { FormEvent, useState } from 'react'
 
 import { CheckMark } from '@/components/CheckMark'
-import { ErrorMessage } from '@/components/ErrorMessage'
 import { InputField } from '@/components/InputField'
 import { signUp } from '@/utils/api'
 
@@ -35,6 +34,8 @@ export default function SignUpPage() {
     const [isAnimating, setIsAnimating] = useState(false)
     const [registeredSuccessfully, setRegisteredSuccessfully] = useState(false)
     const [passwordConfirmationError, setPasswordConfimationError] = useState(false)
+    const [emailAlreadyExists, setEmailAlreadyExists] = useState(false)
+    const [weakPasswordError, setWeakPasswordError] = useState(false)
 
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -50,14 +51,56 @@ export default function SignUpPage() {
             return
         }
 
-        updateStep(currentStep + 1)
-
         try {
             await signUp(name, email, password)
+            updateStep(currentStep + 1)
             setRegisteredSuccessfully(true)
         } catch (error: any) {
-            alert(error.response.data.mensagem)
+            if (error?.response?.data?.mensagem === "Email já cadastrado") {
+                setEmailAlreadyExists(true)
+            }
+            if (error?.response?.data?.mensagem?.includes("Sua senha deverá conter")) {
+                setWeakPasswordError(true)
+                return
+            }
             updateStep(0)
+        }
+    }
+
+    const getErrorMessage = (inputName: string): string => {
+        if (passwordConfirmationError) {
+            if (inputName === "password") {
+                return "As duas senhas precisam ser iguais"
+            }
+            if (inputName === "confirmationPassword") {
+                return " "
+            }
+        }
+
+        if (weakPasswordError) {
+            if (inputName === "password") {
+                return "Sua senha deverá conter no mínimo 8 caracteres sendo eles: 1 letra maiúscula, 1 número e 1 símbolo @,$,!,%,? ou &"
+            }
+            if (inputName === "confirmationPassword") {
+                return " "
+            }
+        }
+
+        if (inputName === "email" && emailAlreadyExists) {
+            return "E-mail já cadastrado"
+        }
+
+        return ""
+    }
+
+    const handleInputChange = (inputName: string) => {
+        // reset errors
+        if (inputName === "password" || inputName === "confirmationPassword") {
+            setPasswordConfimationError(false)
+            setWeakPasswordError(false)
+        }
+        if (inputName === "email") {
+            setEmailAlreadyExists(false)
         }
     }
 
@@ -150,6 +193,8 @@ export default function SignUpPage() {
                             type='text'
                             placeholder='Digite seu nome'
                             required
+                            errorMessage={getErrorMessage("name")}
+                            onChange={() => handleInputChange("name")}
                         />
                         <InputField
                             inputId='email'
@@ -158,6 +203,8 @@ export default function SignUpPage() {
                             type='email'
                             placeholder='Digite seu e-mail'
                             required
+                            errorMessage={getErrorMessage("email")}
+                            onChange={() => handleInputChange("email")}
                         />
                         <button
                             type='button'
@@ -174,6 +221,8 @@ export default function SignUpPage() {
                             type='password'
                             placeholder='••••••••'
                             required
+                            errorMessage={getErrorMessage("password")}
+                            onChange={() => handleInputChange("password")}
                         />
                         <InputField
                             inputId='confirmationPassword'
@@ -182,8 +231,9 @@ export default function SignUpPage() {
                             type='password'
                             placeholder='••••••••'
                             required
+                            errorMessage={getErrorMessage("confirmationPassword")}
+                            onChange={() => handleInputChange("confirmationPassword")}
                         />
-                        {passwordConfirmationError && <ErrorMessage message='As duas senhas precisam ser iguais' />}
                         <div className={styles.actions}>
                             <button
                                 type='button'
