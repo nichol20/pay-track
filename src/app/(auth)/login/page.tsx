@@ -26,7 +26,6 @@ export default function Login() {
         try {
             await login(email, password)
         } catch (error: any) {
-            console.log(error)
             if (error.response?.status === 404 || error.response?.status === 401) {
                 setInvalidPasswordOrEmailError(true)
             }

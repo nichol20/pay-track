@@ -52,6 +52,21 @@
     }
 }
 
+.chargeIdRowItem {
+    .content {
+        color: $colors-text-secondary;
+    }
+    
+    button.content {
+        background-color: transparent;
+        
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+}
+
 .clientRowItem {
     .content {
         color: $colors-text-secondary;
@@ -67,26 +82,25 @@
 }
 
 .statusRowItem {
-
     .content {
         padding: 0 8px;
         border-radius: 6px;
     }
+}
 
-    .content.paid {
-        background-color: $colors-valid-bg;
-        color: $colors-valid-text;
-    }
+.content.paid {
+    background-color: $colors-valid-bg;
+    color: $colors-valid-text;
+}
 
-    .content.pending {
-        background-color: $colors-attention-bg;
-        color: $colors-attention-text;
-    }
+.content.pending {
+    background-color: $colors-attention-bg;
+    color: $colors-attention-text;
+}
 
-    .content.overdue {
-        background-color: $colors-invalid-bg;
-        color: $colors-invalid-text;
-    }
+.content.overdue {
+    background-color: $colors-invalid-bg;
+    color: $colors-invalid-text;
 }
 
 .optionsRowItem {
@@ -138,5 +152,53 @@
             background-color: $colors-light-green;
             color: $colors-dark-green;
         }
+    }
+}
+
+.chargeDetails {
+    @include display-flex(center, flex-start);
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+
+    .titleBox {
+        @include display-flex();
+        gap: 16px;
+        font: $big-body-text-font;
+
+        > img {
+            width: 32px;
+            height: 32px;
+        }
+    }
+
+    .field {
+        @include display-flex(center, flex-start);
+        flex-direction: column;
+        gap: 8px;
+        width: 100%;
+
+        .name {
+            font-weight: bold
+        }
+    }
+
+    .fieldGroup {
+        @include display-flex(flex-start);
+        gap: 20px;
+        width: 100%;
+
+        > .field:first-child {
+            width: 70%;
+        }
+
+        > .field:last-child {
+            width: 30%;
+        }
+    }
+
+    .statusField .content {
+        padding: 0 12px;
+        border-radius: 20px;
     }
 }

@@ -56,9 +56,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
                 ...res.user
             })
         }
-        catch (err) {
-            console.error(err)
-        }
+        catch (err) { }
         finally {
             setIsLoading(false)
         }

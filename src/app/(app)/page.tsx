@@ -21,7 +21,6 @@ export default function Home() {
       setChargesDashboard(chargesD)
       const clientsD = await getClientsDashboard()
       setClientsDashboard(clientsD)
-      console.log(chargesD, clientsD)
     }
 
     getData()

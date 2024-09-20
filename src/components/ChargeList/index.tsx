@@ -4,7 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 
 import { Charge, ClientDetailsCharge, SimpleCharge } from '@/types/charge'
-import { attentionIcon, pencilIcon, trashCanIcon } from '@/assets/images'
+import { attentionIcon, fileIcon, pencilIcon, trashCanIcon } from '@/assets/images'
 import { centsToReal } from '@/utils/money'
 import { translateChargeStatus } from '@/utils/translation'
 import { ChargeForm } from '../ChargeForm'
@@ -68,6 +68,7 @@ export const ChargeList = ({ columns, rows, className, refresh }: ChargeListProp
     const [showEditChargeForm, setShowEditChargeForm] = useState(false)
     const [currentCharge, setCurrentCharge] = useState<Charge | null>(null)
     const [currentClient, setCurrentClient] = useState<{ id: number, name: string } | null>(null)
+    const [showChargeDetails, setShowChargeDetails] = useState(false)
     const toast = useToast()
     const sortedColumns = columns ? columnsOrder.filter(column => columns.includes(column)) : columnsOrder
     const headerStyle: CSSProperties = {
@@ -103,6 +104,16 @@ export const ChargeList = ({ columns, rows, className, refresh }: ChargeListProp
 
         if (columnName === "client" && "id" in row) {
             contentElement = <Link href={`clients/${row.id}`} className={contentClassName}>{content}</Link>
+        }
+
+        if (columnName === "chargeId" && "id" in row) {
+            contentElement = <button
+                className={contentClassName}
+                onClick={() => {
+                    setShowChargeDetails(true)
+                    setCurrentCharge(row)
+                }}
+            >{content}</button>
         }
 
         return (
@@ -176,29 +187,66 @@ export const ChargeList = ({ columns, rows, className, refresh }: ChargeListProp
                             </div>}
                     </div>
                 ))}
-                {showDeletionConfimationBox &&
-                    <Modal className={styles.confirmationBox} close={() => setShowDeletionConfirmationBox(false)}>
-                        <Image src={attentionIcon} alt="attention" />
-                        <span className={styles.deletionMessage}>Tem certeza que deseja excluir esta cobrança?</span>
-                        <div className={styles.actions}>
-                            <button
-                                className={styles.cancelBtn}
-                                onClick={() => setShowDeletionConfirmationBox(false)}
-                            >Não</button>
-                            <button
-                                className={styles.confirmationBtn}
-                                onClick={handleChargeDeletion}
-                            >Sim</button>
-                        </div>
-                    </Modal>}
-                {showEditChargeForm &&
-                    <ChargeForm
-                        client={currentClient!}
-                        charge={currentCharge}
-                        close={() => setShowEditChargeForm(false)}
-                        onSubmit={refresh}
-                    />}
             </div>
+            {showDeletionConfimationBox &&
+                <Modal className={styles.confirmationBox} close={() => setShowDeletionConfirmationBox(false)}>
+                    <Image src={attentionIcon} alt="attention" />
+                    <span className={styles.deletionMessage}>Tem certeza que deseja excluir esta cobrança?</span>
+                    <div className={styles.actions}>
+                        <button
+                            className={styles.cancelBtn}
+                            onClick={() => setShowDeletionConfirmationBox(false)}
+                        >Não</button>
+                        <button
+                            className={styles.confirmationBtn}
+                            onClick={handleChargeDeletion}
+                        >Sim</button>
+                    </div>
+                </Modal>}
+            {showEditChargeForm &&
+                <ChargeForm
+                    client={currentClient!}
+                    charge={currentCharge}
+                    close={() => setShowEditChargeForm(false)}
+                    onSubmit={refresh}
+                />}
+            {showChargeDetails && currentCharge &&
+                <Modal className={styles.chargeDetails} close={() => setShowChargeDetails(false)}>
+                    <div className={styles.titleBox}>
+                        <Image src={fileIcon} alt="file" />
+                        {<span className={styles.title}>Detalhe da Cobrança</span>}
+                    </div>
+                    <div className={styles.field}>
+                        <span className={styles.name}>Nome</span>
+                        <span className={styles.content}>{currentCharge.nome}</span>
+                    </div>
+                    <div className={styles.field}>
+                        <span className={styles.name}>Descrição</span>
+                        <span className={styles.content}>{currentCharge.descricao}</span>
+                    </div>
+                    <div className={styles.fieldGroup}>
+                        <div className={styles.field}>
+                            <span className={styles.name}>Vencimento</span>
+                            <span className={styles.content}>{new Date(currentCharge.data_venc).toLocaleDateString()}</span>
+                        </div>
+                        <div className={styles.field}>
+                            <span className={styles.name}>Valor</span>
+                            <span className={styles.content}>{centsToReal(currentCharge.valor, true)}</span>
+                        </div>
+                    </div>
+                    <div className={styles.fieldGroup}>
+                        <div className={styles.field}>
+                            <span className={styles.name}>ID cobrança</span>
+                            <span className={styles.content}>{currentCharge.id_cob}</span>
+                        </div>
+                        <div className={`${styles.field} ${styles.statusField}`}>
+                            <span className={styles.name}>Status</span>
+                            <span
+                                className={`${styles.content} ${styles[translateChargeStatus(currentCharge.status)]}`}
+                            >{currentCharge.status}</span>
+                        </div>
+                    </div>
+                </Modal>}
         </div>
     )
 }
