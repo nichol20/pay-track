@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import '@/styles/globals.scss'
-import { AuthProvider } from "@/contexts/AuthContext";
+import { AuthProvider } from "@/contexts/Auth";
+import { ToastProvider } from "@/contexts/Toast";
 
 export const metadata: Metadata = {
   title: "Track pay",
@@ -15,9 +16,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <AuthProvider>
-          {children}
-        </AuthProvider>
+        <ToastProvider>
+          <AuthProvider>
+            {children}
+          </AuthProvider>
+        </ToastProvider>
       </body>
     </html>
   );

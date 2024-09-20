@@ -7,7 +7,7 @@ import { redirect } from 'next/navigation'
 import { loginPageImg } from '@/assets/images'
 import { ErrorMessage } from '@/components/ErrorMessage'
 import { InputField } from '@/components/InputField'
-import { useAuth } from '@/contexts/AuthContext'
+import { useAuth } from '@/contexts/Auth'
 
 import styles from '@/styles/Login.module.scss'
 

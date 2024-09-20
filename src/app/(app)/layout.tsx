@@ -2,7 +2,7 @@
 import '@/styles/globals.scss'
 import { Aside } from "@/components/Aside";
 import { Header } from "@/components/Header";
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/contexts/Auth';
 import { useEffect } from 'react';
 import { redirect } from 'next/navigation';
 

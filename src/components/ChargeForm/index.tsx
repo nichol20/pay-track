@@ -11,6 +11,7 @@ import { fileIcon } from '@/assets/images'
 import { useState } from 'react'
 import { addCharge, updateCharge } from '@/utils/api'
 import { formatToInputDate } from '@/utils/date'
+import { useToast } from '@/contexts/Toast'
 
 interface ChargeFormProps {
     client: {
@@ -26,6 +27,7 @@ const requiredFields = ["description", "date"]
 
 export const ChargeForm = ({ client, charge, close, onSubmit }: ChargeFormProps) => {
     const [requiredFieldsMissing, setRequiredFieldsMissing] = useState<string[]>([])
+    const toast = useToast()
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
@@ -60,6 +62,7 @@ export const ChargeForm = ({ client, charge, close, onSubmit }: ChargeFormProps)
                 })
                 onSubmit && onSubmit()
                 close()
+                toast({ message: "Cobrança alterada com sucesso!", status: "success" })
                 return
             }
 
@@ -72,8 +75,10 @@ export const ChargeForm = ({ client, charge, close, onSubmit }: ChargeFormProps)
             })
             onSubmit && onSubmit()
             close()
+            toast({ message: "Cobrança adicionada com sucesso!", status: "success" })
         } catch (error: any) {
-
+            const toastMessage = charge ? "Falha na alteração da cobrança!" : "Falha na criação da cobrança!"
+            toast({ message: toastMessage, status: "error" })
         }
     }
 

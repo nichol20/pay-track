@@ -7,6 +7,7 @@ import Image from 'next/image'
 import { clientsIcon } from '@/assets/images'
 import { useState } from 'react'
 import { registerClient, updateClient } from '@/utils/api'
+import { useToast } from '@/contexts/Toast'
 
 interface ClientFormProps {
     client?: Client
@@ -20,6 +21,7 @@ export const ClientForm = ({ client, close, onSubmit }: ClientFormProps) => {
     const [requiredFieldsMissing, setRequiredFieldsMissing] = useState<string[]>([])
     const [emailAlreadyExists, setEmailAlreadyExists] = useState(false)
     const [cpfAlreadyExists, setCpfAlreadyExists] = useState(false)
+    const toast = useToast()
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
@@ -67,19 +69,26 @@ export const ClientForm = ({ client, close, onSubmit }: ClientFormProps) => {
                 await updateClient(client.id, newClient)
                 onSubmit && onSubmit()
                 close()
+                toast({ message: "Cliente alterado com sucesso!", status: "success" })
                 return
             }
 
             await registerClient(newClient)
             onSubmit && onSubmit()
             close()
+            toast({ message: "Cliente adicionado com sucesso!", status: "success" })
         } catch (error: any) {
-            if (error?.response?.data?.mensagem === "O e-mail já cadastrado") {
+            const message = error?.response?.data?.mensagem
+            if (message === "O e-mail já cadastrado") {
                 setEmailAlreadyExists(true)
+                return
             }
-            if (error?.response?.data?.mensagem === "O cpf já cadastrado") {
+            if (message === "O cpf já cadastrado") {
                 setCpfAlreadyExists(true)
+                return
             }
+            const toastMessage = client ? "Falha na alteração do cliente!" : "Falha ao cadastrar cliente!"
+            toast({ message: toastMessage, status: "error" })
         }
     }
 

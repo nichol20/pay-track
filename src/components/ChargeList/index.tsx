@@ -12,6 +12,7 @@ import { Modal } from '../Modal'
 
 import styles from './style.module.scss'
 import { deleteCharge } from '@/utils/api'
+import { useToast } from '@/contexts/Toast'
 
 export type ChargeListColumn =
     | "client"
@@ -67,6 +68,7 @@ export const ChargeList = ({ columns, rows, className, refresh }: ChargeListProp
     const [showEditChargeForm, setShowEditChargeForm] = useState(false)
     const [currentCharge, setCurrentCharge] = useState<Charge | null>(null)
     const [currentClient, setCurrentClient] = useState<{ id: number, name: string } | null>(null)
+    const toast = useToast()
     const sortedColumns = columns ? columnsOrder.filter(column => columns.includes(column)) : columnsOrder
     const headerStyle: CSSProperties = {
         gridTemplateColumns: sortedColumns
@@ -138,9 +140,11 @@ export const ChargeList = ({ columns, rows, className, refresh }: ChargeListProp
             try {
                 await deleteCharge(currentCharge.id_cob)
                 refresh && refresh()
+                toast({ message: "Cobrança excluída com sucesso!", status: "success" })
             } catch (error: any) {
-                if (error?.response?.data?.mensagem === "Essa cobrança não pode ser deletada") {
-                    // can't delete paid  or overdue charge
+                const message = error?.response?.data?.mensagem
+                if (message === "Essa cobrança não pode ser deletada") {
+                    toast({ message: "Esta cobrança não pode ser excluída!", status: "error" })
                 }
             }
         }

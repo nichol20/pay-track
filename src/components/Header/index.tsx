@@ -8,11 +8,12 @@ import { chevronDownIcon, exitIcon, pencilIcon } from '@/assets/images'
 import { Modal } from '../Modal'
 import { InputField } from '../InputField'
 import { ClosableElement } from '../ClosableElement'
-import { useAuth } from '@/contexts/AuthContext'
+import { useAuth } from '@/contexts/Auth'
 import { nameToImageRepresentation } from '@/utils/user'
 
 import styles from './style.module.scss'
 import { updateUser } from '@/utils/api'
+import { useToast } from '@/contexts/Toast'
 
 const requiredFields = ["name", "email", "password", "confirmationPassword"]
 
@@ -25,7 +26,8 @@ export const Header = () => {
     const [emailAlreadyExists, setEmailAlreadyExists] = useState(false)
     const [cpfAlreadyExists, setCpfAlreadyExists] = useState(false)
     const [weakPasswordError, setWeakPasswordError] = useState(false)
-    const { user, logout } = useAuth()
+    const { user, logout, refreshUser } = useAuth()
+    const toast = useToast()
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
@@ -63,17 +65,24 @@ export const Header = () => {
                 cpf,
                 telefone: phone.length === 0 ? undefined : phone
             })
+            toast({ message: "Cadastro alterado com sucesso!", status: "success" })
+            setShowEditForm(false)
+            refreshUser()
         } catch (error: any) {
-            if (error?.response?.data?.mensagem === "E-mail já cadastrado!") {
+            const message = error?.response?.data?.mensagem
+            if (message === "E-mail já cadastrado!") {
                 setEmailAlreadyExists(true)
+                return
             }
-            if (error?.response?.data?.mensagem === "CPF já cadastrado!") {
+            if (message === "CPF já cadastrado!") {
                 setCpfAlreadyExists(true)
+                return
             }
-            if (error?.response?.data?.mensagem?.includes("Sua senha deverá conter")) {
+            if (message?.includes("Sua senha deverá conter")) {
                 setWeakPasswordError(true)
+                return
             }
-            console.log(error)
+            toast({ message: "Falha na alteração de cadastro!", status: "error" })
         }
     }
 

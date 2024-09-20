@@ -12,6 +12,7 @@ interface AuthContext {
     token: string | null
     login: (email: string, password: string) => Promise<void>
     logout: () => void
+    refreshUser: () => Promise<void>
 }
 
 interface AuthProviderProps {
@@ -43,27 +44,27 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         router.push("/login")
     }
 
-    useEffect(() => {
-        const refreshUser = async () => {
-            try {
-                const t = getFromCache<string>(SessionStorageKeys.TOKEN) ?? ""
-                const userId = getFromCache<number>(SessionStorageKeys.USER_ID) ?? 0
-                setToken(t)
+    const refreshUser = async () => {
+        try {
+            const t = getFromCache<string>(SessionStorageKeys.TOKEN) ?? ""
+            const userId = getFromCache<number>(SessionStorageKeys.USER_ID) ?? 0
+            setToken(t)
 
-                const res = await api.getUser(userId, t)
-                setUser({
-                    id: userId,
-                    ...res.user
-                })
-            }
-            catch (err) {
-                console.error(err)
-            }
-            finally {
-                setIsLoading(false)
-            }
+            const res = await api.getUser(userId, t)
+            setUser({
+                id: userId,
+                ...res.user
+            })
         }
+        catch (err) {
+            console.error(err)
+        }
+        finally {
+            setIsLoading(false)
+        }
+    }
 
+    useEffect(() => {
         refreshUser()
     }, [])
 
@@ -96,7 +97,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     if (isLoading) return <>Loading...</>
 
     return (
-        <AuthContext.Provider value={{ user, token, login, logout }}>
+        <AuthContext.Provider value={{ user, token, login, logout, refreshUser }}>
             {children}
         </AuthContext.Provider>
     )
