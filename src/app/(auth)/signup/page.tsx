@@ -33,75 +33,77 @@ export default function SignUpPage() {
     const [currentStep, setCurrentStep] = useState(0)
     const [isAnimating, setIsAnimating] = useState(false)
     const [registeredSuccessfully, setRegisteredSuccessfully] = useState(false)
-    const [passwordConfirmationError, setPasswordConfimationError] = useState(false)
-    const [emailAlreadyExists, setEmailAlreadyExists] = useState(false)
-    const [weakPasswordError, setWeakPasswordError] = useState(false)
+    const [formErrors, setFormErrors] = useState({
+        passwordMismatch: false,
+        emailExists: false,
+        weakPassword: false,
+    })
+
+    const validateForm = (formData: FormData) => {
+        const password = formData.get("password") as string
+        const confirmationPassword = formData.get("confirmationPassword") as string
+        if (password !== confirmationPassword) {
+            setFormErrors(prev => ({ ...prev, passwordMismatch: true }))
+            return false
+        }
+
+        return true
+    }
 
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
         const formData = new FormData(event.currentTarget)
-        const name = formData.get("name") as string
-        const email = formData.get("email") as string
-        const password = formData.get("password") as string
-        const confirmationPassword = formData.get("confirmationPassword") as string
 
-        if (password !== confirmationPassword) {
-            setPasswordConfimationError(true)
-            return
-        }
+        if (!validateForm(formData)) return
 
         try {
-            await signUp(name, email, password)
+            await signUp(
+                formData.get("name") as string,
+                formData.get("email") as string,
+                formData.get("password") as string
+            )
             updateStep(currentStep + 1)
             setRegisteredSuccessfully(true)
         } catch (error: any) {
-            if (error?.response?.data?.mensagem === "Email já cadastrado") {
-                setEmailAlreadyExists(true)
-            }
-            if (error?.response?.data?.mensagem?.includes("Sua senha deverá conter")) {
-                setWeakPasswordError(true)
-                return
-            }
+            const message = error?.response?.data?.mensagem
+            const weakPassword = message?.includes("Sua senha deverá conter")
+            setFormErrors(prev => ({
+                ...prev,
+                emailExists: message === "Email já cadastrado",
+                weakPassword
+            }))
+
+            if (weakPassword) return
             updateStep(0)
         }
     }
 
     const getErrorMessage = (inputName: string): string => {
-        if (passwordConfirmationError) {
-            if (inputName === "password") {
-                return "As duas senhas precisam ser iguais"
-            }
-            if (inputName === "confirmationPassword") {
-                return " "
-            }
-        }
+        const { passwordMismatch, emailExists, weakPassword } = formErrors
 
-        if (weakPasswordError) {
+        if (passwordMismatch) {
+            if (inputName === "password") return "As duas senhas precisam ser iguais"
+            if (inputName === "confirmationPassword") return " "
+        }
+        if (weakPassword) {
             if (inputName === "password") {
                 return "Sua senha deverá conter no mínimo 8 caracteres sendo eles: 1 letra maiúscula, 1 número e 1 símbolo @,$,!,%,? ou &"
             }
-            if (inputName === "confirmationPassword") {
-                return " "
-            }
+            if (inputName === "confirmationPassword") return " "
         }
-
-        if (inputName === "email" && emailAlreadyExists) {
-            return "E-mail já cadastrado"
-        }
+        if (emailExists && inputName === "email") return "E-mail já cadastrado"
 
         return ""
     }
 
-    const handleInputChange = (inputName: string) => {
-        // reset errors
-        if (inputName === "password" || inputName === "confirmationPassword") {
-            setPasswordConfimationError(false)
-            setWeakPasswordError(false)
-        }
-        if (inputName === "email") {
-            setEmailAlreadyExists(false)
-        }
+    const resetError = (inputName: string) => {
+        setFormErrors(prev => ({
+            ...prev,
+            passwordMismatch: inputName === "password" || inputName === "confirmationPassword" ? false : prev.passwordMismatch,
+            emailExists: inputName === "email" ? false : prev.emailExists,
+            weakPassword: inputName === "password" ? false : prev.weakPassword,
+        }))
     }
 
     const updateStep = (newStep: number) => {
@@ -194,7 +196,7 @@ export default function SignUpPage() {
                             placeholder='Digite seu nome'
                             required
                             errorMessage={getErrorMessage("name")}
-                            onChange={() => handleInputChange("name")}
+                            onChange={() => resetError("name")}
                         />
                         <InputField
                             inputId='email'
@@ -204,7 +206,7 @@ export default function SignUpPage() {
                             placeholder='Digite seu e-mail'
                             required
                             errorMessage={getErrorMessage("email")}
-                            onChange={() => handleInputChange("email")}
+                            onChange={() => resetError("email")}
                         />
                         <button
                             type='button'
@@ -222,7 +224,7 @@ export default function SignUpPage() {
                             placeholder='••••••••'
                             required
                             errorMessage={getErrorMessage("password")}
-                            onChange={() => handleInputChange("password")}
+                            onChange={() => resetError("password")}
                         />
                         <InputField
                             inputId='confirmationPassword'
@@ -232,7 +234,7 @@ export default function SignUpPage() {
                             placeholder='••••••••'
                             required
                             errorMessage={getErrorMessage("confirmationPassword")}
-                            onChange={() => handleInputChange("confirmationPassword")}
+                            onChange={() => resetError("confirmationPassword")}
                         />
                         <div className={styles.actions}>
                             <button

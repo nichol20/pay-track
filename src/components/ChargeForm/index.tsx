@@ -29,21 +29,20 @@ export const ChargeForm = ({ client, charge, close, onSubmit }: ChargeFormProps)
     const [requiredFieldsMissing, setRequiredFieldsMissing] = useState<string[]>([])
     const toast = useToast()
 
+    const validateForm = (formData: FormData) => {
+        const missingFields = requiredFields.filter(field => !formData.get(field))
+        if (missingFields.length > 0) {
+            setRequiredFieldsMissing(missingFields)
+            return false
+        }
+        return true
+    }
+
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
         const formData = new FormData(event.currentTarget)
 
-        const fieldsMissing: string[] = []
-        requiredFields.forEach(fieldName => {
-            const field = formData.get(fieldName) as string
-            if (field.length === 0) {
-                fieldsMissing.push(fieldName)
-            }
-        })
-        if (fieldsMissing.length > 0) {
-            setRequiredFieldsMissing(fieldsMissing)
-            return
-        }
+        if (!validateForm(formData)) return
 
         const description = formData.get("description") as string
         const date = formData.get("date") as string
@@ -90,8 +89,7 @@ export const ChargeForm = ({ client, charge, close, onSubmit }: ChargeFormProps)
         return ""
     }
 
-    const handleInputChange = (inputName: string) => {
-        // reset errors
+    const resetError = (inputName: string) => {
         setRequiredFieldsMissing(prev => prev.filter(n => n !== inputName))
     }
 
@@ -126,7 +124,7 @@ export const ChargeForm = ({ client, charge, close, onSubmit }: ChargeFormProps)
                     placeholder='Digite a descrição'
                     defaultValue={charge?.descricao}
                     errorMessage={getErrorMessage("description")}
-                    onChange={() => handleInputChange("description")}
+                    onChange={() => resetError("description")}
                 />
                 <div className={styles.fieldGroup}>
                     <InputField
@@ -137,7 +135,7 @@ export const ChargeForm = ({ client, charge, close, onSubmit }: ChargeFormProps)
                         placeholder='Data de Vencimento'
                         defaultValue={charge ? formatToInputDate(charge.data_venc) : undefined}
                         errorMessage={getErrorMessage("date")}
-                        onChange={() => handleInputChange("date")}
+                        onChange={() => resetError("date")}
                     />
                     <InputField
                         inputId='value'

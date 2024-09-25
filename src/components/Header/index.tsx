@@ -10,10 +10,10 @@ import { InputField } from '../InputField'
 import { ClosableElement } from '../ClosableElement'
 import { useAuth } from '@/contexts/Auth'
 import { nameToImageRepresentation } from '@/utils/user'
-
-import styles from './style.module.scss'
 import { updateUser } from '@/utils/api'
 import { useToast } from '@/contexts/Toast'
+
+import styles from './style.module.scss'
 
 const requiredFields = ["name", "email", "password", "confirmationPassword"]
 
@@ -21,135 +21,120 @@ export const Header = () => {
     const pathname = usePathname()
     const [showEditForm, setShowEditForm] = useState(false)
     const [showOptions, setShowOptions] = useState(false)
-    const [requiredFieldsMissing, setRequiredFieldsMissing] = useState<string[]>([])
-    const [passwordConfirmationError, setPasswordConfimationError] = useState(false)
-    const [emailAlreadyExists, setEmailAlreadyExists] = useState(false)
-    const [cpfAlreadyExists, setCpfAlreadyExists] = useState(false)
-    const [weakPasswordError, setWeakPasswordError] = useState(false)
+    const [formErrors, setFormErrors] = useState({
+        missingFields: [] as string[],
+        passwordMismatch: false,
+        emailExists: false,
+        cpfExists: false,
+        weakPassword: false,
+        invalidEmail: false
+    })
+
     const { user, logout, refreshUser } = useAuth()
     const toast = useToast()
+
+    const validateForm = (formData: FormData) => {
+        const missingFields = requiredFields.filter(field => !formData.get(field))
+        if (missingFields.length > 0) {
+            setFormErrors(prev => ({ ...prev, missingFields }))
+            return false
+        }
+
+        const password = formData.get("password") as string
+        const confirmationPassword = formData.get("confirmationPassword") as string
+        if (password !== confirmationPassword) {
+            setFormErrors(prev => ({ ...prev, passwordMismatch: true }))
+            return false
+        }
+
+        return true
+    }
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
         const formData = new FormData(event.currentTarget)
 
-        const fieldsMissing: string[] = []
-        requiredFields.forEach(fieldName => {
-            const field = formData.get(fieldName) as string
-            if (field.length === 0) {
-                fieldsMissing.push(fieldName)
-            }
-        })
-        if (fieldsMissing.length > 0) {
-            setRequiredFieldsMissing(fieldsMissing)
-            return
-        }
-
-        const name = formData.get("name") as string
-        const email = formData.get("email") as string
-        const cpf = formData.get("cpf") as string
-        const phone = formData.get("phone") as string
-        const password = formData.get("password") as string
-        const confirmationPassword = formData.get("confirmationPassword") as string
-
-        if (password !== confirmationPassword) {
-            setPasswordConfimationError(true)
-            return
-        }
+        if (!validateForm(formData)) return
 
         try {
             await updateUser({
-                email,
-                senha: password,
-                nome: name,
-                cpf,
-                telefone: phone.length === 0 ? undefined : phone
+                email: formData.get("email") as string,
+                senha: formData.get("password") as string,
+                nome: formData.get("name") as string,
+                cpf: formData.get("cpf")?.toString() || undefined,
+                telefone: formData.get("phone")?.toString() || undefined,
             })
             toast({ message: "Cadastro alterado com sucesso!", status: "success" })
             setShowEditForm(false)
             refreshUser()
         } catch (error: any) {
             const message = error?.response?.data?.mensagem
-            if (message === "E-mail já cadastrado!") {
-                setEmailAlreadyExists(true)
-                return
-            }
-            if (message === "CPF já cadastrado!") {
-                setCpfAlreadyExists(true)
-                return
-            }
-            if (message?.includes("Sua senha deverá conter")) {
-                setWeakPasswordError(true)
-                return
-            }
+
+            const emailExists = message === "E-mail já cadastrado!"
+            const cpfExists = message === "CPF já cadastrado!"
+            const invalidEmail = message === "Digite um e-mail válido"
+            const weakPassword = message?.includes("Sua senha deverá conter")
+            setFormErrors(prev => ({
+                ...prev,
+                emailExists,
+                cpfExists,
+                weakPassword,
+                invalidEmail
+            }))
+            if (emailExists || cpfExists || invalidEmail || weakPassword) return
             toast({ message: "Falha na alteração de cadastro!", status: "error" })
         }
     }
 
     const getErrorMessage = (inputName: string): string => {
-        if (requiredFieldsMissing.includes(inputName)) {
-            return "Esse campo deve ser preenchido"
-        }
+        const { missingFields, passwordMismatch, emailExists, cpfExists, weakPassword, invalidEmail } = formErrors
 
-        if (passwordConfirmationError) {
-            if (inputName === "password") {
-                return "As duas senhas precisam ser iguais"
-            }
-            if (inputName === "confirmationPassword") {
-                return " "
-            }
+        if (missingFields.includes(inputName)) return "Esse campo deve ser preenchido"
+        if (passwordMismatch) {
+            if (inputName === "password") return "As duas senhas precisam ser iguais"
+            if (inputName === "confirmationPassword") return " "
         }
-
-        if (weakPasswordError) {
-            if (inputName === "password") {
-                return "Sua senha deverá conter no mínimo 8 caracteres sendo eles: 1 letra maiúscula, 1 número e 1 símbolo @,$,!,%,? ou &"
-            }
-            if (inputName === "confirmationPassword") {
-                return " "
-            }
+        if (weakPassword && inputName === "password") {
+            return "Sua senha deverá conter no mínimo 8 caracteres sendo eles: 1 letra maiúscula, 1 número e 1 símbolo @,$,!,%,? ou &"
         }
-
-        if (inputName === "email" && emailAlreadyExists) {
-            return "E-mail já cadastrado"
+        if (inputName === "email") {
+            if (emailExists) return "E-mail já cadastrado"
+            if (invalidEmail) return "E-mail inválido"
         }
-        if (inputName === "cpf" && cpfAlreadyExists) {
-            return "CPF já cadastrado"
-        }
+        if (cpfExists && inputName === "cpf") return "CPF já cadastrado"
 
         return ""
     }
 
-    const handleInputChange = (inputName: string) => {
-        // reset errors
-        setRequiredFieldsMissing(prev => prev.filter(n => n !== inputName))
-        if (inputName === "password" || inputName === "confirmationPassword") {
-            setPasswordConfimationError(false)
-            setWeakPasswordError(false)
-        }
-        if (inputName === "email") {
-            setEmailAlreadyExists(false)
-        }
+    const resetError = (inputName: string) => {
+        setFormErrors(prev => ({
+            ...prev,
+            missingFields: prev.missingFields.filter(field => field !== inputName),
+            passwordMismatch: inputName === "password" || inputName === "confirmationPassword" ? false : prev.passwordMismatch,
+            emailExists: inputName === "email" ? false : prev.emailExists,
+            cpfExists: inputName === "cpf" ? false : prev.cpfExists,
+            weakPassword: inputName === "password" ? false : prev.weakPassword,
+            invalidEmail: inputName === "email" ? false : prev.invalidEmail
+        }))
     }
 
     const renderPathElement = () => {
-        let path = <></>
         if (pathname === "/clients") {
-            path = <Link href="/clients" className={styles.pathLink}>Clientes</Link>
+            return <Link href="/clients" className={styles.pathLink}>Clientes</Link>
         }
-
         if (pathname.includes("/clients/")) {
-            path = <>
-                <Link href="/clients" className={styles.pathLink}>Clientes</Link>
-                <span>{">"}</span>
-                <span>Detalhes do cliente</span>
-            </>
+            return (
+                <>
+                    <Link href="/clients" className={styles.pathLink}>Clientes</Link>
+                    <span>{">"}</span>
+                    <span>Detalhes do cliente</span>
+                </>
+            )
         }
-
         if (pathname === "/charges") {
             return <Link href="/charges" className={styles.pathLink}>Cobranças</Link>
         }
-
-        return path
+        return null
     }
 
     const handleEditUserBtnClick = () => {
@@ -167,7 +152,7 @@ export const Header = () => {
                 <div className={styles.userImg}>{user ? nameToImageRepresentation(user.nome) : ""}</div>
                 <span className={styles.userName}>{user?.nome}</span>
                 <div className={styles.optionsContainer}>
-                    <button className={styles.showOptionsBtn} onClick={() => setShowOptions(true)}>
+                    <button className={styles.showOptionsBtn} onClick={() => setShowOptions(!showOptions)}>
                         <Image src={chevronDownIcon} alt="chevron down" />
                     </button>
                     <ClosableElement isOpen={showOptions} close={() => setShowOptions(false)} className={styles.options}>
@@ -182,68 +167,70 @@ export const Header = () => {
                     </ClosableElement>
                 </div>
             </div>
-            {showEditForm && <Modal close={() => setShowEditForm(false)}>
-                <form className={styles.editForm} onSubmit={handleSubmit}>
-                    <span className={styles.formTitle}>Edite seu cadastro</span>
-                    <InputField
-                        inputId='name'
-                        title='Nome*'
-                        name="name"
-                        type='text'
-                        placeholder='Digite seu nome'
-                        defaultValue={user?.nome}
-                        errorMessage={getErrorMessage("name")}
-                        onChange={() => handleInputChange("name")}
-                    />
-                    <InputField
-                        inputId='email'
-                        title='E-mail*'
-                        name="email"
-                        type='email'
-                        placeholder='Digite seu e-mail'
-                        defaultValue={user?.email}
-                        errorMessage={getErrorMessage("email")}
-                        onChange={() => handleInputChange("email")}
-                    />
-                    <div className={styles.fieldGroup}>
+            {showEditForm && (
+                <Modal close={() => setShowEditForm(false)}>
+                    <form className={styles.editForm} onSubmit={handleSubmit}>
+                        <span className={styles.formTitle}>Edite seu cadastro</span>
                         <InputField
-                            inputId='cpf'
-                            title='CPF'
-                            name="cpf"
+                            inputId='name'
+                            title='Nome*'
+                            name="name"
                             type='text'
-                            placeholder='Digite seu CPF'
-                            defaultValue={user?.cpf}
+                            placeholder='Digite seu nome'
+                            defaultValue={user?.nome}
+                            errorMessage={getErrorMessage("name")}
+                            onChange={() => resetError("name")}
                         />
                         <InputField
-                            inputId='phone'
-                            title='Telefone'
-                            name="phone"
-                            type='text'
-                            placeholder='Digite seu Telefone'
-                            defaultValue={user?.telefone}
+                            inputId='email'
+                            title='E-mail*'
+                            name="email"
+                            type='email'
+                            placeholder='Digite seu e-mail'
+                            defaultValue={user?.email}
+                            errorMessage={getErrorMessage("email")}
+                            onChange={() => resetError("email")}
                         />
-                    </div>
-                    <InputField
-                        inputId='password'
-                        title='Nova Senha*'
-                        name="password"
-                        type='password'
-                        placeholder='••••••••'
-                        errorMessage={getErrorMessage("password")}
-                        onChange={() => handleInputChange("password")}
-                    />
-                    <InputField
-                        inputId='confirmationPassword'
-                        title='Confirmar Senha*'
-                        name="confirmationPassword"
-                        type='password'
-                        placeholder='••••••••'
-                        errorMessage={getErrorMessage("confirmationPassword")}
-                        onChange={() => handleInputChange("confirmationPassword")}
-                    />
-                    <button className={styles.submitBtn}>Aplicar</button>
-                </form>
-            </Modal>}
+                        <div className={styles.fieldGroup}>
+                            <InputField
+                                inputId='cpf'
+                                title='CPF'
+                                name="cpf"
+                                type='text'
+                                placeholder='Digite seu CPF'
+                                defaultValue={user?.cpf}
+                            />
+                            <InputField
+                                inputId='phone'
+                                title='Telefone'
+                                name="phone"
+                                type='text'
+                                placeholder='Digite seu Telefone'
+                                defaultValue={user?.telefone}
+                            />
+                        </div>
+                        <InputField
+                            inputId='password'
+                            title='Nova Senha*'
+                            name="password"
+                            type='password'
+                            placeholder='••••••••'
+                            errorMessage={getErrorMessage("password")}
+                            onChange={() => resetError("password")}
+                        />
+                        <InputField
+                            inputId='confirmationPassword'
+                            title='Confirmar Senha*'
+                            name="confirmationPassword"
+                            type='password'
+                            placeholder='••••••••'
+                            errorMessage={getErrorMessage("confirmationPassword")}
+                            onChange={() => resetError("confirmationPassword")}
+                        />
+                        <button className={styles.submitBtn}>Aplicar</button>
+                    </form>
+                </Modal>
+            )}
         </header>
     )
 }

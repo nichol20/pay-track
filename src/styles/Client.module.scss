@@ -61,7 +61,7 @@
             color: $colors-text-primary;
 
             &.hidden {
-                display: none; // Hide fields with null values
+                display: none;
             }
 
             .title {
