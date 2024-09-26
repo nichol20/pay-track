@@ -1,4 +1,5 @@
 export const nameToImageRepresentation = (name: string) => {
+    if (name.length === 0) return ""
     const vowels = ["a", "e", "i", "o", "u"]
     let representation = name[0]
 

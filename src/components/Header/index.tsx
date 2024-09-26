@@ -152,7 +152,7 @@ export const Header = () => {
                 <div className={styles.userImg}>{user ? nameToImageRepresentation(user.nome) : ""}</div>
                 <span className={styles.userName}>{user?.nome}</span>
                 <div className={styles.optionsContainer}>
-                    <button className={styles.showOptionsBtn} onClick={() => setShowOptions(!showOptions)}>
+                    <button className={styles.showOptionsBtn} data-testid="showOptionsBtn" onClick={() => setShowOptions(!showOptions)}>
                         <Image src={chevronDownIcon} alt="chevron down" />
                     </button>
                     <ClosableElement isOpen={showOptions} close={() => setShowOptions(false)} className={styles.options}>
