@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { AuthProvider, useAuth } from '../Auth'
 import * as api from '@/utils/api'
 import { SessionStorageKeys, setToCache, removeFromCache } from '@/utils/sessionStorage'
@@ -8,6 +8,7 @@ import { act } from 'react'
 jest.mock('@/utils/api')
 jest.mock('@/utils/sessionStorage')
 jest.mock('next/navigation', () => ({
+    ...jest.requireActual('next/navigation'),
     useRouter: jest.fn(),
 }))
 
@@ -25,14 +26,16 @@ const MockComponent = () => {
     )
 }
 
+// It keeps giving an 'act' warning, but I couldn't find a solution
 describe('AuthProvider', () => {
     const mockUser = { id: 1, email: 'test@example.com' }
     const mockToken = 'mockToken';
 
     const mockApiLogin = api.login as jest.Mock
+    const mockUseRouter = useRouter as jest.Mock
 
     beforeEach(() => {
-        (useRouter as jest.Mock).mockReturnValue({
+        mockUseRouter.mockReturnValue({
             push: mockRouterPush,
         })
     })
@@ -56,15 +59,14 @@ describe('AuthProvider', () => {
             user: mockUser,
         })
 
-        render(
+        await act(async () => render(
             <AuthProvider>
                 <MockComponent />
             </AuthProvider>
-        )
+        ))
 
-        await act(async () => {
-            screen.getByText('Login').click()
-        })
+        const loginBtn = screen.getByRole('button', { name: /login/i })
+        fireEvent.click(loginBtn)
 
         await waitFor(() => {
             expect(screen.getByText(`User: ${mockUser.email}`)).toBeInTheDocument()
@@ -77,15 +79,14 @@ describe('AuthProvider', () => {
     })
 
     test('logout clears the user and token, then redirects to login page', async () => {
-        render(
+        await act(async () => render(
             <AuthProvider>
                 <MockComponent />
             </AuthProvider>
-        )
+        ))
 
-        await act(async () => {
-            screen.getByText('Logout').click()
-        })
+        const logoutBtn = screen.getByRole('button', { name: /logout/i })
+        fireEvent.click(logoutBtn)
 
         expect(screen.getByText('No user logged in')).toBeInTheDocument()
 
