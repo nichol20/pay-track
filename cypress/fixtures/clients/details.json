@@ -1,0 +1,32 @@
+{
+  "client": {
+    "nome": "Teste",
+    "cpf": "606.944.940-32",
+    "email": "teste@gmail.com",
+    "telefone": "(11) 999112334",
+    "endereco": null,
+    "complemento": null,
+    "cep": null,
+    "bairro": null,
+    "cidade": null,
+    "uf": null,
+    "status": "Inadimplente",
+    "usuario_id": 1
+  },
+  "charges": [
+    {
+      "id_cob": "45fbaf62-da83-485e-9e55-f185498c01b5",
+      "descricao": "teste pendente",
+      "data_venc": "2023-11-23T03:00:00.000Z",
+      "valor": 30000,
+      "status": "Vencida"
+    },
+    {
+      "id_cob": "b5d01261-bf18-4632-9a54-af6b51f307dc",
+      "descricao": "teste pendente 2",
+      "data_venc": "2026-11-23T03:00:00.000Z",
+      "valor": 30000,
+      "status": "Pendente"
+    }
+  ]
+}

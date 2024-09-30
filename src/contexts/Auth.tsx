@@ -47,7 +47,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     const refreshUser = async () => {
         try {
             const t = getFromCache<string>(SessionStorageKeys.TOKEN) ?? ""
-            const userId = getFromCache<number>(SessionStorageKeys.USER_ID) ?? 0
+            const userId = getFromCache<number>(SessionStorageKeys.USER_ID) ?? -1
             setToken(t)
 
             const res = await api.getUser(userId, t)

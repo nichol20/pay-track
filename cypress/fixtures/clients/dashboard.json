@@ -1,0 +1,22 @@
+{
+  "clientesEmdia": {
+    "clientes": [
+      {
+        "id": 999,
+        "nome": "Jonas",
+        "cpf": "123.456.789-00"
+      }
+    ],
+    "quantidade": "1"
+  },
+  "clientesInadimplentes": {
+    "clientes": [
+      {
+        "id": 1,
+        "nome": "Marcos",
+        "cpf": "606.944.940-32"
+      }
+    ],
+    "quantidade": "1"
+  }
+}

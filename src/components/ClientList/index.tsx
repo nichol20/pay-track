@@ -85,7 +85,7 @@ export const ClientList = ({ columns, rows, className }: ClientListProps) => {
         let contentElement = <span className={contentClassName}>{content}</span>
 
         if (columnName === "client") {
-            contentElement = <Link href={`clients/${row.id}`} className={contentClassName}>{content}</Link>
+            contentElement = <Link href={`clients/${row.id}`} className={contentClassName} data-testid="clientLink">{content}</Link>
         }
 
         return (
@@ -109,7 +109,7 @@ export const ClientList = ({ columns, rows, className }: ClientListProps) => {
                     </div>
                 ))}
             </div>
-            <div className={styles.rows}>
+            <div className={styles.rows} data-testid="clientRows">
                 {rows.map(row => (
                     <div key={row.id} className={styles.clientRow} style={headerStyle}>
                         {sortedColumns.map(column => renderRow(row, column))}

@@ -1,0 +1,18 @@
+[
+  {
+    "id": 2,
+    "nome": "Teste",
+    "cpf": "606.944.940-32",
+    "email": "teste@gmail.com",
+    "telefone": "(11) 999112334",
+    "status": "Em dia"
+  },
+  {
+    "id": 3,
+    "nome": "Jhon nunes",
+    "cpf": "321093",
+    "email": "jhon.nunes@email.com",
+    "telefone": "312321",
+    "status": "Em dia"
+  }
+]

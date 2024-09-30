@@ -1,0 +1,38 @@
+{
+  "Pendente": {
+    "charges": [
+      {
+        "nome": "Marcos",
+        "id_cob": "b5d01261-bf18-4632-9a54-af6b51f307dc",
+        "valor": 30000,
+        "status": "Pendente"
+      }
+    ],
+    "total": 30000,
+    "quantidade": 1
+  },
+  "Paga": {
+    "charges": [
+      {
+        "nome": "Marcos",
+        "id_cob": "b5d01261-bf18-4632-9a54-af6b51f307da",
+        "valor": 30000,
+        "status": "Paga"
+      }
+    ],
+    "total": 30000,
+    "quantidade": 1
+  },
+  "Vencida": {
+    "charges": [
+      {
+        "nome": "Marcos",
+        "id_cob": "45fbaf62-da83-485e-9e55-f185498c01b5",
+        "valor": 30000,
+        "status": "Vencida"
+      }
+    ],
+    "total": 30000,
+    "quantidade": 1
+  }
+}

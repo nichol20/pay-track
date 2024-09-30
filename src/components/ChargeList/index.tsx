@@ -103,7 +103,7 @@ export const ChargeList = ({ columns, rows, className, refresh }: ChargeListProp
         let contentElement = <span className={contentClassName}>{content}</span>
 
         if (columnName === "client" && "id" in row) {
-            contentElement = <Link href={`clients/${row.id}`} className={contentClassName}>{content}</Link>
+            contentElement = <Link href={`clients/${row.id}`} className={contentClassName} data-testid="clientLink">{content}</Link>
         }
 
         if (columnName === "chargeId" && "id" in row) {
@@ -170,7 +170,7 @@ export const ChargeList = ({ columns, rows, className, refresh }: ChargeListProp
                     </div>
                 ))}
             </div>
-            <div className={styles.rows}>
+            <div className={styles.rows} data-testid="chargeRows" >
                 {rows.map((row, i) => (
                     <div key={i} className={styles.chargeRow} style={headerStyle}>
                         {sortedColumns.map(column => renderRow(row, column))}

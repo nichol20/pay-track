@@ -17,10 +17,13 @@ export default function Home() {
 
   useEffect(() => {
     const getData = async () => {
-      const chargesD = await getChargesDashboard()
-      setChargesDashboard(chargesD)
-      const clientsD = await getClientsDashboard()
-      setClientsDashboard(clientsD)
+      try {
+        const chargesD = await getChargesDashboard()
+        setChargesDashboard(chargesD)
+        const clientsD = await getClientsDashboard()
+        setClientsDashboard(clientsD)
+      } catch (error) {
+      }
     }
 
     getData()

@@ -1,0 +1,10 @@
+{
+  "user": {
+    "id": 1,
+    "nome": "Lucas 2",
+    "email": "registerTeste2@gmail.com",
+    "cpf": "123",
+    "telefone": null
+  },
+  "token": "token"
+}
