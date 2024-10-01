@@ -39,6 +39,7 @@ export const Aside = () => {
                     <Image src={fileIcon} alt="file" />
                     <span className={styles.linkName}>Cobranças</span>
                 </Link>
+                <div className={styles.indicator}></div>
             </nav>
         </aside>
     )

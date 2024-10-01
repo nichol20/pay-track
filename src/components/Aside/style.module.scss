@@ -7,19 +7,22 @@
     bottom: 0;
     grid-area: aside;
     background-color: $colors-bg-secondary;
-    padding: 40px 16px;
+    padding: 40px 0px;
 }
 
 .navigationMenu {
+    position: relative;
     @include display-flex();
     flex-direction: column;
     gap: 70px;
+    width: 100%;
+    padding: 0 16px;
 }
 
 .link {
-    @include display-flex();
+    @include display-flex(space-between);
+    height: 70px;
     flex-direction: column;
-    gap: 8px;
     text-decoration: none;
     color: $colors-text-primary;
     font: $medium-body-text-font;
@@ -38,4 +41,26 @@
             @include medium-pink-filter();
         }
     }
+}
+
+.indicator {
+    position: absolute;
+    width: 2px;
+    height: 70px;
+    right: 0;
+    background-color: $colors-medium-pink;
+    top: 0;
+    transition: all 300ms ease-in-out;
+}
+
+.link:nth-child(1).active ~ .indicator {
+    transform: translateY(0);
+}
+
+.link:nth-child(2).active ~ .indicator {
+    transform: translateY(calc(70px * 2));
+}
+
+.link:nth-child(3).active ~ .indicator {
+    transform: translateY(calc(70px * 4));
 }
