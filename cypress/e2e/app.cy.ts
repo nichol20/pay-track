@@ -241,6 +241,7 @@ describe("App", () => {
 
         // clean search input
         cy.getByClass('searchInput').children('button[class*=cleanBtn]').click()
+        cy.wait("@search")
         cy.getByClass('searchInput').children('input').should('contain.value', '')
         cy.getByTestId("chargeRows").children("div").should('have.length.gte', 4)
     })
